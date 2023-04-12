@@ -59,10 +59,10 @@
         
           <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
         
-        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Suche"></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
       </div>
     </div>
   </div>
@@ -173,9 +173,9 @@
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> vend_name <span class="keyword">FROM</span> vendors <span class="keyword">WHERE</span> vend_name REGEXP <span class="string">&#x27;\.&#x27;</span> <span class="keyword">ORDER</span> <span class="keyword">BY</span> vend_name;</span><br></pre></td></tr></table></figure>
 
 <p><strong>匹配字符类：</strong></p>
-<p><img src="/%E3%80%8AMySQL%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A%E3%80%8B%E7%AC%94%E8%AE%B0/image-20230205210313527.png" alt="image-20230205210313527"></p>
+<p><img src="/2023/04/12/%E3%80%8AMySQL%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A%E3%80%8B%E7%AC%94%E8%AE%B0/image-20230205210313527.png" alt="image-20230205210313527"></p>
 <p><strong>匹配多个实例：</strong></p>
-<p><img src="/%E3%80%8AMySQL%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A%E3%80%8B%E7%AC%94%E8%AE%B0%5Cimage-20230205211103262.png" alt="image-20230205211103262"></p>
+<p><img src="/2023/04/12/%E3%80%8AMySQL%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A%E3%80%8B%E7%AC%94%E8%AE%B0/image-20230205211103262.png" alt="image-20230205211103262"></p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> prod_name <span class="keyword">FROM</span> products <span class="keyword">WHERE</span> prod_name REGEXP <span class="string">&#x27;\\([0-9] sticks?\\)&#x27;</span> <span class="keyword">ORDER</span> <span class="keyword">BY</span> prod_name;</span><br></pre></td></tr></table></figure>
 
 <p>说明：\\(匹配左括号，[0-9]匹配任意数字，s?匹配s出现0次或1次，也即stick或者sticks，\\)匹配右括号。</p>
@@ -183,7 +183,7 @@
 
 <p>说明：[:digit:]匹配任意数字，{4}要求前面的字符出现4次，即任意4位数字。</p>
 <p><strong>定位符：</strong></p>
-<p><img src="/%E3%80%8AMySQL%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A%E3%80%8B%E7%AC%94%E8%AE%B0%5Cimage-20230205211621835.png" alt="image-20230205211621835"></p>
+<p><img src="/2023/04/12/%E3%80%8AMySQL%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A%E3%80%8B%E7%AC%94%E8%AE%B0/image-20230205211621835.png" alt="image-20230205211621835"></p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> prod_name <span class="keyword">FROM</span> products <span class="keyword">WHERE</span> prod_name REGEXP <span class="string">&#x27;^[0-9\\.]&#x27;</span> <span class="keyword">ORDER</span> <span class="keyword">BY</span> prod_name;、、匹配以数字和小数点开头的所有产品</span><br></pre></td></tr></table></figure>
 
 <p><strong>^在集合中表示否定该集合，在集合外表示文本开始处的定位符</strong></p>
@@ -200,10 +200,10 @@
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> Concat(vend_name,<span class="string">&#x27;(&#x27;</span>,vend_country,<span class="string">&#x27;)&#x27;</span>) <span class="keyword">AS</span> vend_title <span class="keyword">FROM</span> vendors <span class="keyword">ORDER</span> <span class="keyword">BY</span> vend_name;</span><br></pre></td></tr></table></figure>
 
 <p>任何客户机应用都可以按名引用 这个列，就像它是一个实际的表列一样</p>
-<p><img src="/%E3%80%8AMySQL%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A%E3%80%8B%E7%AC%94%E8%AE%B0%5Cimage-20230206135900369.png" alt="image-20230206135900369"></p>
+<p><img src="/2023/04/12/%E3%80%8AMySQL%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A%E3%80%8B%E7%AC%94%E8%AE%B0/image-20230206135900369.png" alt="image-20230206135900369"></p>
 <h2 id="第11章-使用数据处理函数"><a href="#第11章-使用数据处理函数" class="headerlink" title="第11章 使用数据处理函数"></a>第11章 使用数据处理函数</h2><p><strong>文本处理函数：</strong></p>
-<p><img src="/%E3%80%8AMySQL%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A%E3%80%8B%E7%AC%94%E8%AE%B0%5Cimage-20230206140032089.png" alt="image-20230206140032089"></p>
-<p><img src="/%E3%80%8AMySQL%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A%E3%80%8B%E7%AC%94%E8%AE%B0%5Cimage-20230206140053391.png" alt="image-20230206140053391"></p>
+<p><img src="/2023/04/12/%E3%80%8AMySQL%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A%E3%80%8B%E7%AC%94%E8%AE%B0/image-20230206140032089.png" alt="image-20230206140032089"></p>
+<p><img src="/2023/04/12/%E3%80%8AMySQL%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A%E3%80%8B%E7%AC%94%E8%AE%B0/image-20230206140053391.png" alt="image-20230206140053391"></p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> vend_name, <span class="built_in">Upper</span>(vend_name) <span class="keyword">AS</span> vend_name_upcase <span class="keyword">FROM</span> vendors <span class="keyword">ORDER</span> <span class="keyword">BY</span> vend_name;</span><br></pre></td></tr></table></figure>
 
 <p>Soundex()是一个将任何文本串转换为描述其语音表示的字母数字模式的算法，主要目的是根据声音比较字符串之间的相似性。</p>
@@ -211,7 +211,7 @@
 
 <p><strong>日期和时间处理函数：</strong></p>
 <p>日期和时间采用相应的数据类型和特殊的格式存储，应用程序一般不使用用来存储日期和时间的格式，因此日期和时间函数总是被用来读取、统计和处理这些值。</p>
-<p><img src="/%E3%80%8AMySQL%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A%E3%80%8B%E7%AC%94%E8%AE%B0%5Cimage-20230206141025622.png" alt="image-20230206141025622"></p>
+<p><img src="/2023/04/12/%E3%80%8AMySQL%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A%E3%80%8B%E7%AC%94%E8%AE%B0/image-20230206141025622.png" alt="image-20230206141025622"></p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> cust_id,order_num <span class="keyword">FROM</span> orders <span class="keyword">WHERE</span> <span class="type">Date</span>(order_date)<span class="operator">=</span><span class="string">&#x27;2005-09-01&#x27;</span></span><br></pre></td></tr></table></figure>
 
 <p>应该总是使用yyyy-mm-dd格式，如果需要日期则使用Date()，即便知道相应的列只包含日期</p>
@@ -219,7 +219,7 @@
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> cust_id,order_num <span class="keyword">FROM</span> orders <span class="keyword">WHERE</span> <span class="type">Date</span>(order_date) <span class="keyword">BETWEEN</span> <span class="string">&#x27;2005-09-01&#x27;</span> <span class="keyword">AND</span> <span class="string">&#x27;2005-09-30&#x27;</span>;</span><br><span class="line"><span class="keyword">SELECT</span> cust_id,order_num <span class="keyword">FROM</span> orders <span class="keyword">WHERE</span> <span class="keyword">Year</span>(order_date)<span class="operator">=</span><span class="number">2005</span> <span class="keyword">AND</span> <span class="keyword">Month</span>(order_date)<span class="operator">=</span><span class="number">9</span>;</span><br></pre></td></tr></table></figure>
 
 <p><strong>数值处理函数：</strong></p>
-<p><img src="/%E3%80%8AMySQL%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A%E3%80%8B%E7%AC%94%E8%AE%B0%5Cimage-20230206141447396.png" alt="image-20230206141447396"></p>
+<p><img src="/2023/04/12/%E3%80%8AMySQL%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A%E3%80%8B%E7%AC%94%E8%AE%B0/image-20230206141447396.png" alt="image-20230206141447396"></p>
 <h2 id="第12章-汇总数据"><a href="#第12章-汇总数据" class="headerlink" title="第12章 汇总数据"></a>第12章 汇总数据</h2><h3 id="AVG"><a href="#AVG" class="headerlink" title="AVG()"></a>AVG()</h3><p>对表中特定列或特定行的平均值</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="built_in">AVG</span>(prod_price) <span class="keyword">AS</span> avg_price <span class="keyword">FROM</span> products;</span><br><span class="line"><span class="keyword">SELECT</span> <span class="built_in">AVG</span>(prod_price) <span class="keyword">AS</span> avg_price <span class="keyword">FROM</span> products <span class="keyword">WHERE</span> vend_id<span class="operator">=</span><span class="number">1003</span>;</span><br></pre></td></tr></table></figure>
 
@@ -293,7 +293,7 @@
 <p>索引之后使用Match()和Against()执行全文本搜索，前者指定被搜索的列，后者指定要使用的搜索表达式。</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> note_text <span class="keyword">FROM</span> productnotes <span class="keyword">WHERE</span> <span class="keyword">Match</span>(note_text) Against(<span class="string">&#x27;rabbit&#x27;</span>);</span><br></pre></td></tr></table></figure>
 
-<p><img src="/%E3%80%8AMySQL%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A%E3%80%8B%E7%AC%94%E8%AE%B0%5Cimage-20230207163251844.png" alt="image-20230207163251844"></p>
+<p><img src="/2023/04/12/%E3%80%8AMySQL%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A%E3%80%8B%E7%AC%94%E8%AE%B0/image-20230207163251844.png" alt="image-20230207163251844"></p>
 <p>两行含有rabbit，被返回</p>
 <p><strong>传递给Match()的值必须和FULLTEXT()中定义的相同，如果指定多个列必须列出它们且次序正确</strong></p>
 <p>全文本搜索结果的排序返回以文本匹配的良好程度决定</p>
@@ -315,7 +315,7 @@
 <p><strong>布尔文本搜索：</strong></p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> note_text <span class="keyword">FROM</span> productnotes <span class="keyword">WHERE</span> <span class="keyword">Match</span>(note_text)Against(<span class="string">&#x27;heavy -rope*&#x27;</span> <span class="keyword">IN</span> <span class="type">BOOLEAN</span> MODE);<span class="operator">/</span><span class="operator">/</span>匹配包含heavy但不包含任意以rope开始的词的行</span><br></pre></td></tr></table></figure>
 
-<p><img src="/%E3%80%8AMySQL%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A%E3%80%8B%E7%AC%94%E8%AE%B0%5Cimage-20230207171628475.png" alt="image-20230207171628475"></p>
+<p><img src="/2023/04/12/%E3%80%8AMySQL%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A%E3%80%8B%E7%AC%94%E8%AE%B0/image-20230207171628475.png" alt="image-20230207171628475"></p>
 <p><strong>在布尔方式中，不按等级值降序排序返回的行</strong></p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> note_text <span class="keyword">FROM</span> productnotes <span class="keyword">WHERE</span> <span class="keyword">Match</span>(note_text)Against(<span class="string">&#x27;+rabbit +bait&#x27;</span> <span class="keyword">IN</span> <span class="type">BOOLEAN</span> MODE);<span class="operator">/</span><span class="operator">/</span>包含rabbit和bait的行</span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span> note_text <span class="keyword">FROM</span> productnotes <span class="keyword">WHERE</span> <span class="keyword">Match</span>(note_text)Against(<span class="string">&#x27;rabbit bait&#x27;</span> <span class="keyword">IN</span> <span class="type">BOOLEAN</span> MODE);<span class="operator">/</span><span class="operator">/</span>包含rabbit或bait的行</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span> note_text <span class="keyword">FROM</span> productnotes <span class="keyword">WHERE</span> <span class="keyword">Match</span>(note_text)Against(<span class="string">&#x27;&quot;rabbit bait&quot;&#x27;</span> <span class="keyword">IN</span> <span class="type">BOOLEAN</span> MODE);<span class="operator">/</span><span class="operator">/</span>包含短语rabbit bait的行</span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span> note_text <span class="keyword">FROM</span> productnotes <span class="keyword">WHERE</span> <span class="keyword">Match</span>(note_text)Against(<span class="string">&#x27;&gt;rabbit &lt;bait&#x27;</span> <span class="keyword">IN</span> <span class="type">BOOLEAN</span> MODE);<span class="operator">/</span><span class="operator">/</span>包含rabbit或bait的行，前者优先级提高，后者优先级降低</span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span> note_text <span class="keyword">FROM</span> productnotes <span class="keyword">WHERE</span> <span class="keyword">Match</span>(note_text)Against(<span class="string">&#x27;+safe +(&lt;companion)&#x27;</span> <span class="keyword">IN</span> <span class="type">BOOLEAN</span> MODE);<span class="operator">/</span><span class="operator">/</span>包含safe和companion的行，前者优先级提高，后者优先级降低</span><br></pre></td></tr></table></figure>
 
@@ -359,7 +359,7 @@
 <p>在CREATE TABLE时列定义中用DEFAULT关键字指定</p>
 <p><strong>与大多数DBMS不一样，MySQL不允许使用函数作为默认值，它只支持常量。</strong></p>
 <p><strong>引擎类型：</strong></p>
-<p><img src="/%E3%80%8AMySQL%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A%E3%80%8B%E7%AC%94%E8%AE%B0%5Cimage-20230208101639289.png" alt="image-20230208101639289"></p>
+<p><img src="/2023/04/12/%E3%80%8AMySQL%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A%E3%80%8B%E7%AC%94%E8%AE%B0/image-20230208101639289.png" alt="image-20230208101639289"></p>
 <p><strong>外键不能跨引擎，即使用一个引擎的表不能引用使用不同引擎的表的外键</strong></p>
 <h3 id="更新表"><a href="#更新表" class="headerlink" title="更新表"></a>更新表</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> vendors <span class="keyword">ADD</span> vend_phone <span class="type">CHAR</span>(<span class="number">20</span>);</span><br><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> vendors <span class="keyword">DROP</span> <span class="keyword">COLUMN</span> vend_phone <span class="type">CHAR</span>(<span class="number">20</span>);</span><br></pre></td></tr></table></figure>
 
@@ -485,7 +485,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2023/04/12/%E3%80%8AMySQL%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A%E3%80%8B%E7%AC%94%E8%AE%B0/" data-id="clgczshuc0002tkvsa8k8da1d" data-title="《MySQL必知必会》笔记" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2023/04/12/%E3%80%8AMySQL%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A%E3%80%8B%E7%AC%94%E8%AE%B0/" data-id="clgczxss30001jwvs22lz5547" data-title="《MySQL必知必会》笔记" class="article-share-link">Teilen</a>
       
       
       
@@ -524,7 +524,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2023/04/12/%E9%A2%9D/" data-id="clgczshu70001tkvscdlua858" data-title="额" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2023/04/12/%E9%A2%9D/" data-id="clgczxss50002jwvs6tk60on5" data-title="额" class="article-share-link">Teilen</a>
       
       
       
@@ -575,7 +575,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2023/04/12/hello-world/" data-id="clgczshu30000tkvsekrjafza" data-title="Hello World" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2023/04/12/hello-world/" data-id="clgczxsrv0000jwvshw2bcu4s" data-title="Hello World" class="article-share-link">Teilen</a>
       
       
       
@@ -603,7 +603,7 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
+    <h3 class="widget-title">Archiv</h3>
     <div class="widget">
       <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">四月 2023</a></li></ul>
     </div>
@@ -613,7 +613,7 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
+    <h3 class="widget-title">letzter Beitrag</h3>
     <div class="widget">
       <ul>
         
