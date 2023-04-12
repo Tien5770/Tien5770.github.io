@@ -8,12 +8,12 @@
   <link rel="dns-prefetch" href="http://example.com">
   <title>《MySQL必知必会》笔记 | Tien&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="1-7章主键：一列（多列组合），其值能唯一区分表中每个行 主键值规则：任意两行不具有相同的主键值；主键列不允许NULL值 创建数据库 1CREATE DATABASE db;  选择数据库 USE语句 显示信息  123456&#x2F;&#x2F;SHOW语句SHOW DATABASES;&#x2F;&#x2F;获得数据库表SHOW TABLES;&#x2F;&#x2F;获得数据库内的表SHOW COLUMNS FROM table1;&#x2F;&#x2F;显示表列SHO">
+  <meta name="description" content="《MySQL必知必会》笔记">
 <meta property="og:type" content="article">
 <meta property="og:title" content="《MySQL必知必会》笔记">
 <meta property="og:url" content="http://example.com/2023/04/12/%E3%80%8AMySQL%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A%E3%80%8B%E7%AC%94%E8%AE%B0/index.html">
 <meta property="og:site_name" content="Tien&#39;s Blog">
-<meta property="og:description" content="1-7章主键：一列（多列组合），其值能唯一区分表中每个行 主键值规则：任意两行不具有相同的主键值；主键列不允许NULL值 创建数据库 1CREATE DATABASE db;  选择数据库 USE语句 显示信息  123456&#x2F;&#x2F;SHOW语句SHOW DATABASES;&#x2F;&#x2F;获得数据库表SHOW TABLES;&#x2F;&#x2F;获得数据库内的表SHOW COLUMNS FROM table1;&#x2F;&#x2F;显示表列SHO">
+<meta property="og:description" content="《MySQL必知必会》笔记">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://example.com/2023/04/12/%E3%80%8AMySQL%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A%E3%80%8B%E7%AC%94%E8%AE%B0/image-20230205210313527.png">
 <meta property="og:image" content="http://example.com/2023/04/12/%E3%80%8AMySQL%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A%E3%80%8B%E7%AC%94%E8%AE%B0/image-20230205211103262.png">
@@ -27,8 +27,9 @@
 <meta property="og:image" content="http://example.com/2023/04/12/%E3%80%8AMySQL%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A%E3%80%8B%E7%AC%94%E8%AE%B0/image-20230207171628475.png">
 <meta property="og:image" content="http://example.com/2023/04/12/%E3%80%8AMySQL%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A%E3%80%8B%E7%AC%94%E8%AE%B0/image-20230208101639289.png">
 <meta property="article:published_time" content="2023-04-12T00:56:54.000Z">
-<meta property="article:modified_time" content="2023-04-12T01:11:38.816Z">
+<meta property="article:modified_time" content="2023-04-12T01:28:52.876Z">
 <meta property="article:author" content="Tien">
+<meta property="article:tag" content="MySQL">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/2023/04/12/%E3%80%8AMySQL%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A%E3%80%8B%E7%AC%94%E8%AE%B0/image-20230205210313527.png">
   
@@ -566,6 +567,17 @@
     <div class="article-info article-info-index">
       
       
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">MySQL</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
       
 
       
@@ -761,6 +773,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
             <input type="checkbox" q-on="click:toggleTag(e)" q-attr="checked:showTags">
           </label>
           <ul class="article-tag-list" q-show="showTags">
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">MySQL</a>
+              </li>
             
             <div class="clearfix"></div>
           </ul>
