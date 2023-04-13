@@ -20,18 +20,26 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="整理一下看过的TCP相关的内容，主要是小林coding里的">
+  <meta name="description" content="整理一下看过的TCP相关的内容，主要是顺着小林coding里的要点看下来的，有些不太明白的地方去《TCP&#x2F;IP详解 卷1》翻了翻 主要内容：TCP头部关键信息、TCP和UDP的区别、三次握手四次挥手、TCP重传、流量控制和拥塞控制">
 <meta property="og:type" content="article">
 <meta property="og:title" content="TCP相关知识点">
 <meta property="og:url" content="http://example.com/2023/04/12/TCP%E7%9B%B8%E5%85%B3%E5%86%85%E5%AE%B9/index.html">
 <meta property="og:site_name" content="Tien&#39;s Blog">
-<meta property="og:description" content="整理一下看过的TCP相关的内容，主要是小林coding里的">
+<meta property="og:description" content="整理一下看过的TCP相关的内容，主要是顺着小林coding里的要点看下来的，有些不太明白的地方去《TCP&#x2F;IP详解 卷1》翻了翻 主要内容：TCP头部关键信息、TCP和UDP的区别、三次握手四次挥手、TCP重传、流量控制和拥塞控制">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4/%E7%BD%91%E7%BB%9C/TCP%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B.drawio.png">
 <meta property="og:image" content="http://example.com/2023/04/12/TCP%E7%9B%B8%E5%85%B3%E5%86%85%E5%AE%B9/image-20230412220953844.png">
 <meta property="og:image" content="https://cdn.xiaolincoding.com//mysql/other/format,png-20230309230614791.png">
+<meta property="og:image" content="http://example.com/2023/04/12/TCP%E7%9B%B8%E5%85%B3%E5%86%85%E5%AE%B9/image-20230413093137164.png">
+<meta property="og:image" content="http://example.com/2023/04/12/TCP%E7%9B%B8%E5%85%B3%E5%86%85%E5%AE%B9/image-20230413101400179.png">
+<meta property="og:image" content="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost2/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/TCP-%E5%8F%AF%E9%9D%A0%E7%89%B9%E6%80%A7/10.jpg?image_process=watermark,text_5YWs5LyX5Y-377ya5bCP5p6XY29kaW5n,type_ZnpsdHpoaw,x_10,y_10,g_se,size_20,color_0000CD,t_70,fill_0">
+<meta property="og:image" content="http://example.com/2023/04/12/TCP%E7%9B%B8%E5%85%B3%E5%86%85%E5%AE%B9/image-20230413104620567.png">
+<meta property="og:image" content="http://example.com/2023/04/12/TCP%E7%9B%B8%E5%85%B3%E5%86%85%E5%AE%B9/image-20230413133935036.png">
+<meta property="og:image" content="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost2/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/TCP-%E5%8F%AF%E9%9D%A0%E7%89%B9%E6%80%A7/23.jpg?image_process=watermark,text_5YWs5LyX5Y-377ya5bCP5p6XY29kaW5n,type_ZnpsdHpoaw,x_10,y_10,g_se,size_20,color_0000CD,t_70,fill_0">
+<meta property="og:image" content="http://example.com/2023/04/12/TCP%E7%9B%B8%E5%85%B3%E5%86%85%E5%AE%B9/image-20230413164455176.png">
+<meta property="og:image" content="http://example.com/2023/04/12/TCP%E7%9B%B8%E5%85%B3%E5%86%85%E5%AE%B9/image-20230413165618984.png">
 <meta property="article:published_time" content="2023-04-12T10:12:40.000Z">
-<meta property="article:modified_time" content="2023-04-12T14:12:07.924Z">
+<meta property="article:modified_time" content="2023-04-13T09:34:55.382Z">
 <meta property="article:author" content="Tien">
 <meta property="article:tag" content="计算机网络">
 <meta property="article:tag" content="TCP">
@@ -198,10 +206,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2023-04-12 18:12:40 / 修改时间：22:12:07" itemprop="dateCreated datePublished" datetime="2023-04-12T18:12:40+08:00">2023-04-12</time>
+              <time title="创建时间：2023-04-12 18:12:40" itemprop="dateCreated datePublished" datetime="2023-04-12T18:12:40+08:00">2023-04-12</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-04-13 17:34:55" itemprop="dateModified" datetime="2023-04-13T17:34:55+08:00">2023-04-13</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -230,7 +244,8 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>整理一下看过的TCP相关的内容，主要是小林coding里的</p>
+        <p>整理一下看过的TCP相关的内容，主要是顺着小林coding里的要点看下来的，有些不太明白的地方去《TCP/IP详解 卷1》翻了翻</p>
+<p>主要内容：TCP头部关键信息、TCP和UDP的区别、三次握手四次挥手、TCP重传、流量控制和拥塞控制</p>
 <span id="more"></span>
 <h2 id="tcp头中的关键内容"><a class="markdownIt-Anchor" href="#tcp头中的关键内容"></a> TCP头中的关键内容</h2>
 <p>32位序列号：在建立连接时生成随机数作为初始值（与时间有关，每4微妙值加1，同时也与一个根据四元组计算的哈希值有关），每发送N字节数据，该值就加N，通过此序列号<font color='red'><strong>可以保证接受到的数据包有序</strong></font></p>
@@ -366,6 +381,165 @@
 <p>SO_LINGER设置的是延迟关闭的时间，在l_linger为0，l_onoff非0的情况下，调用close后会立即发送RST，跳过四次挥手阶段</p>
 <p>之前记混的一个：SO_REUSEADDR是允许完全重复的捆绑</p>
 </blockquote>
+<p><font color='red'><strong>服务器出现大量TIME_WAIT的原因</strong></font></p>
+<p>TIME_WAIT状态是主动关闭方才会出现的状态，此情况说明服务器主动断开了大量TCP连接</p>
+<ul>
+<li>没有使用HTTP长连接</li>
+</ul>
+<p>HTTP长连接在HTTP/1.0中默认关闭，HTTP/1.1中默认开启。需要<font color='red'><strong>双方</strong></font>在请求-响应的header中开启Connection: Keep-Alive选项。<font color='cornflowerblue'><strong>大多数 Web 服务的实现，不管哪一方禁用了 HTTP Keep-Alive，都是由服务端主动关闭连接</strong></font>，那么此时服务端上就会出现 TIME_WAIT 状态的连接。</p>
+<blockquote>
+<p>TCP也有Keepalive，指的是<font color='cornflowerblue'><strong>TCP的保活机制</strong></font>。如果TCP连接中一直没有数据交互，触发了TCP保活机制，那么内核中的TCP协议栈会发送探测报文（一般保活功能是为服务器程序提供的）。客户主机必须处于以下四个状态之一：</p>
+<ul>
+<li>
+<p>客户主机正常运行且从服务器可达。会正常响应探测报文，保活定时器复位</p>
+</li>
+<li>
+<p>客户主机崩溃，并且关闭或者正在重新启动。无法响应探测报文，服务器将探测报文超时时间设置为75s，即每75s发送一个探测报文，如果10个之后没有收到响应，服务器认为客户主机已经关闭并终止连接（数值来自于《TCP/IP详解，卷1》，linux默认保活时间7200s，探测次数9次，时间间隔75s,也就是7875s之后会发现连接“死亡”）</p>
+<p><img src="image-20230413093137164.png" alt="image-20230413093137164" /></p>
+</li>
+<li>
+<p>客户主机正常运行，但从服务器不可达。与上边的状态相同</p>
+</li>
+<li>
+<p>客户主机崩溃，但已经重新启动。服务器会收到响应，但是响应是一个RST，服务器终止连接</p>
+</li>
+</ul>
+<p><font color='A2CD5A'><strong>P.S. 还有种情况是进程崩溃，这时OS会回收进程资源发送FIN报文，服务器是可以感知的</strong></font></p>
+</blockquote>
+<ul>
+<li>HTTP长连接超时</li>
+</ul>
+<p>web服务软件一般会提供一个参数指定HTTP长连接的超时时间，以防止没有请求的连接占用资源。（nginx的keepalive_timeout参数）定时器到时间服务端会关闭该连接，出现TIME_WAIT状态</p>
+<ul>
+<li>HTTP长连接请求数量达到上限</li>
+</ul>
+<p>Web 服务端通常会有个参数，来定义一条 HTTP 长连接上最大能处理的请求数量，当超过最大限制时，就会主动关闭连接。（nginx的keepalive_requests参数）</p>
+<p><font color='red'><strong>服务器出现大量CLOSE_WAIT的原因</strong></font></p>
+<p>CLOSE_WAIT出现是在收到FIN报文之后，向应用程序交付EOF，在调用close()之后会转为LAST_ACK状态</p>
+<p><font color='cornflowerblue'><strong>当服务端出现大量 CLOSE_WAIT 状态的连接的时候，说明服务端的程序没有调用 close 函数关闭连接</strong></font></p>
+<h2 id="tcp重传机制"><a class="markdownIt-Anchor" href="#tcp重传机制"></a> TCP重传机制</h2>
+<p>重传是TCP实现可靠传输的方式之一</p>
+<h3 id="超时重传"><a class="markdownIt-Anchor" href="#超时重传"></a> 超时重传</h3>
+<p>发送数据时设置一个定时器，如果超时没有收到ACK（数据包丢失或者应答丢失），就会重发数据。</p>
+<p>超时时间（RTO）的设定很重要，<font color='orange'><strong>过长：传输效率低；过短：不必要重传浪费资源，增加网络拥塞程度</strong></font></p>
+<p>RTO的值应该略大于RTT（Round-Trip Time）,因为RTT是描述数据包的往返时间的，如果正常的话，RTT内发送方会收到ACK应答。但是路由器和网络流量均会变化，因此<font color='cornflowerblue'><strong>RTT也可能会经常发生变化，所以TCP应该跟踪其变化并相应地改变RTO</strong></font></p>
+<p>RTT的估计需要采样RTT的时间，并且要加权平均，因为网络状况是不断变化的；另外还需要采样RTT的波动范围：</p>
+<p><img src="image-20230413101400179.png" alt="image-20230413101400179" /></p>
+<p>A是加权平滑的RTT，M是新测量到的RTT，D是被平滑的均值偏差</p>
+<p>g=0.125,h=0.25</p>
+<p>如果超时重发的数据，再次超时的时候，又需要重传的时候，TCP 的策略是<font color='cornflowerblue'><strong>超时间隔加倍</strong></font>。</p>
+<p>也就是<font color='cornflowerblue'><strong>每当遇到一次超时重传的时候，都会将下一次超时时间间隔设为先前值的两倍。两次超时，就说明网络环境差，不宜频繁反复发送。</strong></font></p>
+<p><font color='red'><strong>超时重传的问题是超时周期可能相对较长</strong></font></p>
+<h3 id="快速重传"><a class="markdownIt-Anchor" href="#快速重传"></a> 快速重传</h3>
+<p>快速重传<font color='cornflowerblue'><strong>以数据驱动重传</strong></font></p>
+<p>快速重传的工作方式是当收到三个相同的 ACK 报文时，会在定时器过期之前，重传丢失的报文段。</p>
+<p><img src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost2/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/TCP-%E5%8F%AF%E9%9D%A0%E7%89%B9%E6%80%A7/10.jpg?image_process=watermark,text_5YWs5LyX5Y-377ya5bCP5p6XY29kaW5n,type_ZnpsdHpoaw,x_10,y_10,g_se,size_20,color_0000CD,t_70,fill_0" alt="" /></p>
+<p>快速重传解决了超时重传超时周期过长的问题，但仍然存在<font color='red'><strong>不确定需要重传的数据报文</strong></font>的问题</p>
+<p>上图中只重传Seq2没有问题，但是如果Seq3-5中也有丢失（比如Seq3），此时发送方收到的仍然是ACK2，所以<font color='A2CD5A'><strong>重传之后会继续收到三个ACK3，然后再重传Seq3</strong></font></p>
+<h3 id="sack-selective-acknowledgment"><a class="markdownIt-Anchor" href="#sack-selective-acknowledgment"></a> SACK (Selective Acknowledgment)</h3>
+<p>选择性确认，需要在TCP头部的选项字段中加一个SACK，含义为已收到的数据的信息，在ACK报文中将SACK返回给发送方。</p>
+<p>发送方收到三个相同的ACK报文后，触发快速重传机制，同时读取SACK信息，确定后续丢失的数据并重传，比如上图中，收到三个ACK2，说明2之前的都已被成功接收，然后SACK=3-5，所以2之后的也没有丢失，只重传2</p>
+<p>通过net.ipv4.tcp_sack可以确认该功能是否开启</p>
+<p><img src="image-20230413104620567.png" alt="image-20230413104620567" /></p>
+<h3 id="duplicate-sack"><a class="markdownIt-Anchor" href="#duplicate-sack"></a> Duplicate SACK</h3>
+<p>使用了 SACK 来告诉发送方有哪些数据<font color='red'><strong>被重复接收</strong></font>了</p>
+<p>SACK是不是D-SACK，取决于ACK的值和SACK范围之间的大小关系，比如ACK=1000，SACK=1500-3000,那就说明是1000-1500没收到；如果ACK为3000，SACK=2000-2500，显然就是说2000-2500数据重复接收了</p>
+<p>D-SACK的优点有：</p>
+<ul>
+<li>可以让「发送方」知道，是发出去的包丢了，还是接收方回应的 ACK 包丢了</li>
+<li>可以知道是不是「发送方」的数据包被网络延迟了（被网络延迟的包可能会在快速重传之后到接收方，接收方这时候可以通过SACK反馈给发送方）</li>
+<li>可以知道网络中是不是把「发送方」的数据包给复制了</li>
+</ul>
+<h2 id="tcp流量控制"><a class="markdownIt-Anchor" href="#tcp流量控制"></a> TCP流量控制</h2>
+<h3 id="滑动窗口"><a class="markdownIt-Anchor" href="#滑动窗口"></a> 滑动窗口</h3>
+<p>使用滑动窗口控制发送的数据量：</p>
+<p><img src="image-20230413133935036.png" alt="image-20230413133935036" /></p>
+<blockquote>
+<p>图片来自《TCP/IP详解 卷1》，为发送窗口</p>
+</blockquote>
+<ul>
+<li><font color='cornflowerblue'><strong>提供窗口</strong></font>的大小是由ACK中<font color='cornflowerblue'><strong>窗口大小字段</strong></font>控制的</li>
+<li><font color='A2CD5A'><strong>可用窗口</strong></font>根据确认<font color='A2CD5A'><strong>序列号</strong></font>计算，指的是可以立即发送的数据量（无须等待之前的ACK）</li>
+<li>关闭close：左边界右移，发生在已发送数据得到ACK确认时</li>
+<li>打开open：右边界右移，发生在确认数据得到处理时</li>
+<li>收缩shrink：右边界左移，RFC1122不支持该做法，但TCP必须要能处理该问题</li>
+</ul>
+<p><font color='red'><strong>总之，发送方的窗口由接收方通告，ACK确定左边界位置，头部窗口大小字段配合ACK确定右边界</strong></font></p>
+<h3 id="流量控制"><a class="markdownIt-Anchor" href="#流量控制"></a> 流量控制</h3>
+<p>发送方根据接收方的实际接收能力控制发送的数据量</p>
+<p>通过滑动窗口实现，而滑动窗口则是OS开辟的一块缓存空间，所以有可能会被OS调整。如果先减少缓存再收缩窗口，有可能出现丢包的现象。<font color='cornflowerblue'><strong>TCP 规定是不允许同时减少缓存又收缩窗口的，而是采用先收缩窗口，过段时间再减少缓存，这样就可以避免了丢包情况。</strong></font></p>
+<p><img src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost2/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/TCP-%E5%8F%AF%E9%9D%A0%E7%89%B9%E6%80%A7/23.jpg?image_process=watermark,text_5YWs5LyX5Y-377ya5bCP5p6XY29kaW5n,type_ZnpsdHpoaw,x_10,y_10,g_se,size_20,color_0000CD,t_70,fill_0" alt="" /></p>
+<h3 id="窗口关闭"><a class="markdownIt-Anchor" href="#窗口关闭"></a> 窗口关闭</h3>
+<p>问题：接收方窗口为0后通知发送方，发送方会停止发送数据。如果之后接收方重新打开窗口，通知发送方的报文丢失，会导致双方相互等待，导致死锁。</p>
+<p>解决：TCP为每个连接设定一个定时器，<font color='cornflowerblue'><strong>只要收到对方的0窗口通知，就启动定时器</strong></font>。定时器超时，会发送窗口探测报文，如果对方收到探测报文，会回答自己的接收窗口大小，此后：</p>
+<ul>
+<li>如果接收窗口还是0，那么重置计时器</li>
+<li>如果接收窗口打开，那么死锁解除</li>
+</ul>
+<p>窗口探测一般为3次，每次大约30-60s</p>
+<h3 id="糊涂窗口综合征silly-window-syndrome"><a class="markdownIt-Anchor" href="#糊涂窗口综合征silly-window-syndrome"></a> 糊涂窗口综合征（Silly Window Syndrome）</h3>
+<p>出现该问题时，发送方发送的都是一些较小的数据段，导致每个报文段中真正有用的数据相对于头部信息的比例较小，传输效率较低。（<font color='A2CD5A'><strong>比如，接收方处理数据的速度非常慢，然后慢慢发送方的窗口就变为0，然后接收方处理完几个字节的数据接着就通告对方窗口打开了，发送方欣喜若狂，直接发了几个字节还不如头部长的数据过去</strong></font>）</p>
+<p>SWS会出现在基于窗口的流量控制中，尤其是在不使用固定大小报文段的情况。从上边这个例子可以看出，发送方和接收方都可能导致SWS：接收方有个小窗口就立即通告；发送方有个小数据段就立即发送。</p>
+<p>对症下药，避免SWS的规则如下（<font color='cornflowerblue'><strong>同时满足</strong></font>）：</p>
+<ol>
+<li>
+<p><font color='red'><strong>接收端不通告小的窗口值。</strong></font>根据RFC1122描述的接收算法，当前窗口&lt;min(MSS,recv_buffer/2)时，不通告比当前窗口更大的窗口值。该规则可以使用在处理接收数据使得可用缓存增大中，或者响应窗口探测报文时</p>
+</li>
+<li>
+<p><font color='red'><strong>发送端不发送小的报文段。</strong></font>主要用Nagle算法控制发送时机，为避免SWS，当满足以下条件<font color='cornflowerblue'><strong>之一</strong></font>时才能发送</p>
+<ol>
+<li>全长（MSS）报文段，窗口大小大于MSS</li>
+<li>数据段长度&gt;=接收端<font color='cornflowerblue'><strong>通告过的最大窗口值</strong></font>的一半（这个条件主要用于比较旧的原始主机）</li>
+<li>之前所有数据的ACK都已被接收，或禁用了Nagle算法</li>
+</ol>
+<blockquote>
+<p>根据<a target="_blank" rel="noopener" href="https://datatracker.ietf.org/doc/html/rfc896">RFC 896</a>，Nagle实际上控制的是网络拥塞，其目的定义为“The solution is to inhibit the sending of new  TCP segments  when new  outgoing  data  arrives  from  the  user  if  any previously transmitted data on the connection remains unacknowledged.”</p>
+<p>也就是说每个TCP连接上最多只能有一个未被确认的数据段，如果之前的数据有ACK没收到不会继续发送</p>
+<p>RFC9293中没有规定Nagle算法的实现，这里给个wikipidia上的伪代码描述：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> there is new data to send then</span><br><span class="line">    <span class="keyword">if</span> the window size ≥ MSS and available data is ≥ MSS then</span><br><span class="line">        send complete MSS segment now</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">if</span> there is unconfirmed data still in the pipe then</span><br><span class="line">            enqueue data in the buffer until an acknowledge is received</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            send data immediately</span><br><span class="line">        end <span class="keyword">if</span></span><br><span class="line">    end <span class="keyword">if</span></span><br><span class="line">end <span class="keyword">if</span></span><br></pre></td></tr></table></figure>
+</blockquote>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> value = <span class="number">0</span>;</span><br><span class="line">getsockopt(sock,IPPROTO_TCP,TCP_NODELAY,(<span class="type">char</span> *)&amp;value, <span class="keyword">sizeof</span>(<span class="type">int</span>));</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;TCP_NODELAY opt: %d\n&quot;</span>,value);</span><br></pre></td></tr></table></figure>
+<p>用上边的code测试了Nagle算法默认应该是关闭的，小林那里提到默认是打开的，应该是OS的默认设置啥的不一样吧233</p>
+</li>
+</ol>
+<h2 id="tcp拥塞控制"><a class="markdownIt-Anchor" href="#tcp拥塞控制"></a> TCP拥塞控制</h2>
+<p>流量控制是避免发送方的数据不会填满接收方缓存，导致数据丢失</p>
+<p>拥塞控制是对网络而言，避免发送方的数据填满整个网络。网络拥堵时如果继续发送大量数据，可能会导致延迟、丢失，然后TCP重传，恶性循环。</p>
+<p>所以发送方会维护一个<font color='cornflowerblue'><strong>拥塞窗口</strong></font>cwnd,此时发送窗口的值为min(cwnd,rwnd)，其变化的基本逻辑就是出现拥塞减小；没有拥塞增大</p>
+<p>所以就需要进行拥塞检测，但是没有一个明确的信号可以告知发送方拥塞发生，那发送方直接就看丢包。出现了丢包超时重传，就认为发生了网络拥塞</p>
+<h3 id="慢启动"><a class="markdownIt-Anchor" href="#慢启动"></a> 慢启动</h3>
+<p>发生时间：TCP连接建立时；检测到重传超时导致的丢包；TCP发送端长时间处于空闲状态（可能）；</p>
+<blockquote>
+<p>RFC5681中对慢启动目的和使用情况的解释：Beginning transmission into a network with unknown conditions requires TCP to slowly probe the network to determine the available capacity, in order to avoid congesting the network with an inappropriately large burst of data.The slow start algorithm is used for this purpose at the beginning of a transfer, or after repairing loss detected by the retransmission timer.</p>
+</blockquote>
+<p>这里假设初始窗口大小为1 SMSS（以下就省略SMSS这个单位了；另，具体的IW设定方式在RFC5681有介绍），收到一个数据段的ACK后cwnd=2，然后发送2个数据段，如果成功收到新的ACK，cwnd=4，cwnd=8……也就是<font color='red'><strong>当发送方每收到一个 ACK，拥塞窗口 cwnd 的大小就会加 1</strong></font></p>
+<blockquote>
+<p>可以看出慢启动的增长是个指数增长，看似很快，但称其为慢启动意思是与一开始就以最大可用速率发送相比已经算慢了</p>
+</blockquote>
+<p><img src="image-20230413164455176.png" alt="image-20230413164455176" /></p>
+<blockquote>
+<p>图源自《TCP/IP详解 卷1》</p>
+</blockquote>
+<p>慢启动发送数据段的数量达到慢启动门限（cwnd&gt;=ssthresh）后会进入拥塞避免算法</p>
+<h3 id="拥塞避免"><a class="markdownIt-Anchor" href="#拥塞避免"></a> 拥塞避免</h3>
+<p>进入拥塞避免之后，cwnd的增长值变为线性，此时每接收到1个ACK,cwnd = cwnd + SMSS*SMSS/cwnd.这个式子化简一下就是cwnd = cwnd + (1/k)*SMSS</p>
+<blockquote>
+<p>cwnd = cwnd +  SMSS*SMSS/cwnd</p>
+<p>cwnd = k*SMSS + SMSS*SMSS/(k*SMSS)</p>
+<p>cwnd = k*SMSS + SMSS/k</p>
+<p>将cwnd=k*SMSS代回，cwnd = cwnd + (SMSS/k)</p>
+</blockquote>
+<p>假设ssthresh=8，那么发送八个数据段，收到8个ACK后cwnd=9，然后再发9个数据段cwnd=10，就变为了一个累加增长。</p>
+<p><img src="image-20230413165618984.png" alt="image-20230413165618984" /></p>
+<h3 id="快速恢复"><a class="markdownIt-Anchor" href="#快速恢复"></a> 快速恢复</h3>
+<p>cwnd继续增长，如果出现了快速重传中的三个相同ACK，TCP就认为现在发送超出了网络传输能力的范围，<font color='red'><strong>此时将ssthresh减小为cwnd/2，但不小于2*SMSS，cwnd=ssthresh+3</strong></font></p>
+<p>之后：</p>
+<ul>
+<li>重传丢失的数据包</li>
+<li>如果再收到重复ACK，cwnd+=1</li>
+<li>如果收到新的ACK,cwnd=ssthresh</li>
+</ul>
+<p>这个过程中，首先目的是为了减小cwnd，因为已经发生了拥塞，然后中间cwnd的增加是为了尽快将丢失的数据包发送给目标，最后收到新的ACK说明重传成功了，然后再将cwnd减小。</p>
 
     </div>
 
@@ -447,7 +621,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#tcp%E5%A4%B4%E4%B8%AD%E7%9A%84%E5%85%B3%E9%94%AE%E5%86%85%E5%AE%B9"><span class="nav-number">1.</span> <span class="nav-text"> TCP头中的关键内容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tcp%E7%9A%84%E7%89%B9%E7%82%B9%E4%BB%A5%E5%8F%8A%E4%B8%8Eudp%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">2.</span> <span class="nav-text"> TCP的特点以及与UDP的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tcp%E8%BF%9E%E6%8E%A5"><span class="nav-number">3.</span> <span class="nav-text"> TCP连接</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B"><span class="nav-number">3.1.</span> <span class="nav-text"> 三次握手</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B"><span class="nav-number">3.2.</span> <span class="nav-text"> 四次挥手</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#tcp%E5%A4%B4%E4%B8%AD%E7%9A%84%E5%85%B3%E9%94%AE%E5%86%85%E5%AE%B9"><span class="nav-number">1.</span> <span class="nav-text"> TCP头中的关键内容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tcp%E7%9A%84%E7%89%B9%E7%82%B9%E4%BB%A5%E5%8F%8A%E4%B8%8Eudp%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">2.</span> <span class="nav-text"> TCP的特点以及与UDP的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tcp%E8%BF%9E%E6%8E%A5"><span class="nav-number">3.</span> <span class="nav-text"> TCP连接</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B"><span class="nav-number">3.1.</span> <span class="nav-text"> 三次握手</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B"><span class="nav-number">3.2.</span> <span class="nav-text"> 四次挥手</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tcp%E9%87%8D%E4%BC%A0%E6%9C%BA%E5%88%B6"><span class="nav-number">4.</span> <span class="nav-text"> TCP重传机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B6%85%E6%97%B6%E9%87%8D%E4%BC%A0"><span class="nav-number">4.1.</span> <span class="nav-text"> 超时重传</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BF%AB%E9%80%9F%E9%87%8D%E4%BC%A0"><span class="nav-number">4.2.</span> <span class="nav-text"> 快速重传</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sack-selective-acknowledgment"><span class="nav-number">4.3.</span> <span class="nav-text"> SACK (Selective Acknowledgment)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#duplicate-sack"><span class="nav-number">4.4.</span> <span class="nav-text"> Duplicate SACK</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tcp%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6"><span class="nav-number">5.</span> <span class="nav-text"> TCP流量控制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3"><span class="nav-number">5.1.</span> <span class="nav-text"> 滑动窗口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6"><span class="nav-number">5.2.</span> <span class="nav-text"> 流量控制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AA%97%E5%8F%A3%E5%85%B3%E9%97%AD"><span class="nav-number">5.3.</span> <span class="nav-text"> 窗口关闭</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%8A%E6%B6%82%E7%AA%97%E5%8F%A3%E7%BB%BC%E5%90%88%E5%BE%81silly-window-syndrome"><span class="nav-number">5.4.</span> <span class="nav-text"> 糊涂窗口综合征（Silly Window Syndrome）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tcp%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6"><span class="nav-number">6.</span> <span class="nav-text"> TCP拥塞控制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%85%A2%E5%90%AF%E5%8A%A8"><span class="nav-number">6.1.</span> <span class="nav-text"> 慢启动</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8B%A5%E5%A1%9E%E9%81%BF%E5%85%8D"><span class="nav-number">6.2.</span> <span class="nav-text"> 拥塞避免</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BF%AB%E9%80%9F%E6%81%A2%E5%A4%8D"><span class="nav-number">6.3.</span> <span class="nav-text"> 快速恢复</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
