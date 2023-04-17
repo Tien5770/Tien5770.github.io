@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="IP基础知识 原始IP地址表示 格式：32位正整数，点分十进制方便记忆 分类：ABCDE，D类是多播地址（用于将包发给特定组内的所有主机），E类留用。ABCDE类前两位分别为0，10，110，1110，1111 特殊IP地址：主机号全为1——指定某个网络下所有主机，用于广播；主机号全为0——指定某个网络 多播地址：  224.0.0.0 ~ 224.0.0.255 为预留的组播地址">
+<meta property="og:type" content="article">
+<meta property="og:title" content="IP相关内容">
+<meta property="og:url" content="http://example.com/2023/04/17/IP%E7%9B%B8%E5%85%B3%E5%86%85%E5%AE%B9/index.html">
+<meta property="og:site_name" content="Tien&#39;s Blog">
+<meta property="og:description" content="IP基础知识 原始IP地址表示 格式：32位正整数，点分十进制方便记忆 分类：ABCDE，D类是多播地址（用于将包发给特定组内的所有主机），E类留用。ABCDE类前两位分别为0，10，110，1110，1111 特殊IP地址：主机号全为1——指定某个网络下所有主机，用于广播；主机号全为0——指定某个网络 多播地址：  224.0.0.0 ~ 224.0.0.255 为预留的组播地址">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-04-17T11:08:44.000Z">
+<meta property="article:modified_time" content="2023-04-17T14:54:14.404Z">
+<meta property="article:author" content="Tien">
+<meta property="article:tag" content="IP">
+<meta property="article:tag" content="计算机网络">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2023/04/17/IP%E7%9B%B8%E5%85%B3%E5%86%85%E5%AE%B9/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>IP相关内容 | Tien's Blog</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?fe67470975a39feb91f9d59afeab846c";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Tien's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section">首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section">标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section">分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section">归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/04/17/IP%E7%9B%B8%E5%85%B3%E5%86%85%E5%AE%B9/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/34372430?v=4">
+      <meta itemprop="name" content="Tien">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tien's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          IP相关内容
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-04-17 19:08:44 / 修改时间：22:54:14" itemprop="dateCreated datePublished" datetime="2023-04-17T19:08:44+08:00">2023-04-17</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>9 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="ip基础知识">IP基础知识</h2>
+<h3 id="原始ip地址表示">原始IP地址表示</h3>
+<p>格式：<font color='cornflowerblue'><strong>32位</strong></font>正整数，<font color='cornflowerblue'><strong>点分十进制</strong></font>方便记忆</p>
+<p>分类：ABCDE，D类是多播地址（用于将包发给特定组内的所有主机），E类留用。ABCDE类前两位分别为0，10，110，1110，1111</p>
+<p>特殊IP地址：<font color='A2CD5A'><strong>主机号全为1</strong></font>——指定某个网络下所有主机，用于广播；<font color='A2CD5A'><strong>主机号全为0</strong></font>——指定某个网络</p>
+<p>多播地址：</p>
+<ul>
+<li>224.0.0.0 ~ 224.0.0.255
+为预留的组播地址，只能在局域网中，路由器是不会进行转发的。</li>
+<li>224.0.1.0 ~ 238.255.255.255 为用户可用的组播地址，可以用于 Internet
+上。</li>
+<li>239.0.0.0 ~ 239.255.255.255
+为本地管理组播地址，可供内部网在内部使用，仅在特定的本地范围内有效。</li>
+</ul>
+<p>IP地址分类的优缺点：</p>
+<ul>
+<li><font color='cornflowerblue'><strong>通过最多前4位就能确定地址类型</strong></font>，然后进而能够快速划分网络号和主机号，简单明了</li>
+<li><font color='red'><strong>同一网络下没有地址层次</strong></font>，灵活性不足</li>
+<li>与现实网络的匹配度不好，C类地址一个网络下只有200+个，而B类地址一个网络下6W+个</li>
+</ul>
+<h3 id="子网划分">子网划分</h3>
+<p>子网是指在网络号的基础上，进一步将网络内主机进行划分，所以需要从主机号中借用若干位作为子网号。<strong>要使用子网，必须配置子网掩码</strong>。子网掩码中对应网络号（默认网络号+子网网络号）的位全为1。</p>
+<p>基本的子网划分中，比如借走两位主机号，只能划分4-2=2个子网，这是因为全0和全1不使用。</p>
+<p>外界是感知不到子网的存在的</p>
+<p><img
+src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/IP/16.jpg" /></p>
+<h3
+id="无分类编址cidrclassless-inter-domain-routing">无分类编址CIDR（Classless
+Inter-Domain Routing）</h3>
+<p>不再对地址类型进行区分，也没有划分子网的概念</p>
+<p>32位IP总共有两部分组成：网络前缀+主机号</p>
+<p>表示形式：<font color='cornflowerblue'><strong>a.b.c.d/x</strong></font>，其中x说明前x位是网络前缀</p>
+<p>CIDR中不会将主机号全0和全1的地址排除不使用</p>
+<p>CIDR表示法给出任何一个IP地址，就相当于给出了一个CIDR地址块，这是由连续的IP地址组成的，所以CIDR表示法构成了超网，实现了路由聚合，即从一个IP地址就可以得知一个CIDR地址块。（通过x的大小确定32位中表示网络的前缀，将主机号置0或置1就可得到最小或最大地址）</p>
+<h3 id="公有ip和私有ip">公有IP和私有IP</h3>
+<p><img
+src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/IP/22.jpg" /></p>
+<p>A B C类IP地址中有公有IP和私有IP之分</p>
+<p>公有IP由专门的IP地址分配机构统一分配，在整个互联网范围内保持唯一</p>
+<p>私有IP由组织内部管理，可以重复</p>
+<h3 id="ip转发">IP转发</h3>
+<p>转发过程中，主机与路由器的区别在于主机对不是自身生成的数据报会丢弃；而路由器会进行转发</p>
+<p>简单情况下，对一个主机，如果与目的地点到点连接或共享网络，那么IP数据报直接发送到目的地，不需要使用路由器。否则，主机将数据报发送到默认路由器，由该路由器进行交付。（直接交付）</p>
+<p>转发过程中需要用到的关键信息存储在<font color='cornflowerblue'><strong>路由表</strong></font>中，表中一个条目<span
+class="math inline">\(e_j\)</span>包含以下字段：</p>
+<ul>
+<li>目的地址<span class="math inline">\(d_j\)</span></li>
+<li>掩码<span class="math inline">\(m_j\)</span></li>
+<li>下一跳<span class="math inline">\(n_j\)</span></li>
+<li>接口</li>
+</ul>
+<p>当接收到数据报时，首先提取目的IP地址<span
+class="math inline">\(D\)</span>,查找转发表，如果有直接匹配的目的地址，转发给下一跳的地址</p>
+<p>如果没有直接匹配的表项，计算网络前缀<span
+class="math inline">\(d=(D\and m_{j})\)</span>，</p>
+<p>如果是非本地网络，<span class="math inline">\(d\)</span>与<span
+class="math inline">\(d_j\)</span>比较网络前缀，如果找到前缀匹配（最长前缀匹配）的，则转发到下一跳；如果没找到匹配的，转发给默认路由；如果没有默认路由，报错</p>
+<p><font color='A2CD5A'><strong>（最长前缀匹配的含义是首先网络地址要先对的上，然后再找最长的，不是说直接看网络地址里有多少位相同，比如下图的例子）</strong></font></p>
+<p><img
+src="https://img-blog.csdnimg.cn/20200513100158303.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MDI3NDY3OQ==,size_16,color_FFFFFF,t_70" /></p>
+<p><img
+src="https://img-blog.csdnimg.cn/20200513100859784.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MDI3NDY3OQ==,size_16,color_FFFFFF,t_70" /></p>
+<figure>
+<img
+src="https://img-blog.csdnimg.cn/20200513103951342.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MDI3NDY3OQ==,size_16,color_FFFFFF,t_70"
+alt="img" />
+<figcaption aria-hidden="true">img</figcaption>
+</figure>
+<p><img
+src="https://img-blog.csdnimg.cn/20200513104135531.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MDI3NDY3OQ==,size_16,color_FFFFFF,t_70" /></p>
+<p><font color='red'><strong>（当使用环回地址时，数据报是不会流向网络的，在机器内部进行处理转发）</strong></font></p>
+<h3 id="ip分片与重组">IP分片与重组</h3>
+<p>当IP数据报大小大于MTU时，就会进行分片</p>
+<p>重组的工作由目标主机完成，路由器不负责重组</p>
+<p>之前在TCP里提过，为什么存在MTU的情况下要在TCP层设置MSS再分片，因为如果只在IP层分片，那么一个分片丢失之后，IP层没有超时重传，而是在TCP层超时重传，所以重传的是整个数据包。如果TCP有分片，那么只需要重传丢失的分片即可。</p>
+<h3 id="ipv6">IPv6</h3>
+<p>128位地址，16位一组，由冒号隔开</p>
+<p>连续的0可以将其省略，用两个冒号隔开，但是，一个 IP
+地址中只允许出现一次两个连续的冒号。</p>
+<p><img
+src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/IP/28.jpg" /></p>
+<p>IPv6亮点：</p>
+<ul>
+<li>可自动配置，即使没有 DHCP 服务器也可以实现自动分配IP地址</li>
+<li>包头包首部长度采用固定的值 <code>40</code>
+字节，去掉了包头校验和，简化了首部结构（没有选项字段），减轻了路由器负荷（不允许路由器分片与重组），大大<strong>提高了传输的性能</strong></li>
+<li>有应对伪造 IP
+地址的网络安全功能以及防止线路窃听的功能，大大<strong>提升了安全性</strong></li>
+</ul>
+<h2 id="ip协议相关技术">IP协议相关技术</h2>
+<h3 id="域名解析dns">域名解析DNS</h3>
+<p><font color='cornflowerblue'><strong>进行域名和IP地址的转换</strong></font></p>
+<p>工作流程：</p>
+<ul>
+<li>浏览器先检查自身缓存，是否有与域名对应的IP</li>
+<li>如果没有会检查操作系统域名解析文件(hosts)</li>
+<li>还是没有，会向本地DNS服务器发起查询请求</li>
+<li>本地DNS服务器检查自己的缓存，有就返回，没有会去向根域名服务器请求</li>
+<li>根域名服务器不会直接返回解析结果，而是将一个顶级域名服务器地址返回给本地DNS服务器</li>
+<li>本地DNS再去向顶级域名服务器查询，顶级域名服务器会返回区域权威DNS服务器地址</li>
+<li>本地DNS服务器再去向权威DNS服务器查询，后者将查询结果返回</li>
+<li>本地DNS再将该IP返回给客户端</li>
+</ul>
+<h3 id="arp与rarp">ARP与RARP</h3>
+<p><font color='cornflowerblue'><strong>ARP:
+已知IP地址，获得对应的MAC地址</strong></font></p>
+<ul>
+<li>广播发送ARP请求，其中包含了源IP地址，源MAC地址，目的IP地址</li>
+<li>所有设备收到ARP请求后，会提取目的IP与自己的IP比较，如果一致，就会在ARP响应中写入自己的MAC地址，然后送回</li>
+</ul>
+<p>操作系统获取到MAC之后一般会缓存一段时间</p>
+<p><font color='cornflowerblue'><strong>RARP:
+已知MAC地址，获得对应的IP地址</strong></font></p>
+<p>通常这需要架设一台 <code>RARP</code> 服务器，在这个服务器上注册设备的
+MAC 地址及其 IP 地址。</p>
+<p>设备接入网络后：</p>
+<ul>
+<li>发送请求，请求中包含自己的MAC</li>
+<li>RARP收到请求后会将对应IP返回给设备</li>
+</ul>
+<h3 id="动态获取ip地址dhcp">动态获取IP地址DHCP</h3>
+<p>DHCP全程使用UDP广播通信</p>
+<p>DHCP客户端监听68端口，而服务端监听的是67端口</p>
+<p>工作流程：</p>
+<ul>
+<li>客户端首先发起DHCP发现报文，该报文是IP数据报，但是现在没有IP地址，也没有DHCP服务器地址，所以使用<font color='cornflowerblue'><strong>UDP广播</strong></font>，<font color='A2CD5A'><strong>源IP地址设置为0.0.0.0，广播目的地址为255.255.255.255</strong></font></li>
+<li>DHCP收到DHCP DISCOVER，用DHCP提供报文进行响应，该报文仍然使用 IP
+广播地址 255.255.255.255，该报文信息携带服务器提供可租约的 IP
+地址、子网掩码、默认网关、DNS
+服务器以及<font color='cornflowerblue'><strong>IP
+地址租用期</strong></font>。</li>
+<li>客户端收到一个或多个服务器的 DHCP
+提供报文后，从中选择一个服务器，并向选中的服务器发送<font color='cornflowerblue'>
+<strong>DHCP 请求报文（DHCP
+REQUEST）</strong></font>进行响应，回显配置的参数。</li>
+<li>最后，服务端用 <font color='cornflowerblue'><strong>DHCP ACK
+</strong></font>报文对 DHCP 请求报文进行响应，应答所要求的参数。</li>
+</ul>
+<p>IP租用期控制的是DHCP服务器分配的IP地址的使用时限，快到期时会向服务器发送请求进行租期延长</p>
+<p>为了解决路由器不转发广播包的问题，设置了DHCP中继代理，对不同网段的 IP
+地址分配也可以由一个 DHCP 服务器统一进行管理。</p>
+<p><img
+src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/IP/37.jpg" /></p>
+<h3 id="nat网络地址转换">NAT网络地址转换</h3>
+<p>缓解IPv4地址耗尽的问题</p>
+<p>网络地址端口转换<code>NAPT</code>（Network Address Port
+Translation）则是把内部地址映射到外部网络的一个IP地址的<font color='red'><strong>不同端口</strong></font>上。</p>
+<p>映射时自动生成路由器的转换表，问题：</p>
+<ul>
+<li>外部无法主动与 NAT 内部服务器建立连接，因为 NAPT
+转换表没有转换记录。</li>
+<li>转换表的生成与转换操作都会产生性能开销。</li>
+<li>通信过程中，如果 NAT 路由器重启了，所有的 TCP 连接都将被重置。</li>
+</ul>
+<p>NAT穿透：设备主动获得公有IP，为自己建立端口映射条目，然后使用这个条目对外通讯</p>
+<h3 id="互联网控制报文协议icmp">互联网控制报文协议ICMP</h3>
+<p>功能：差错报文——回应网络错误，查询报文——查询网络信息</p>
+<p>ICMP虽然是网络层协议，但实际上是使用IP协议进行发送</p>
+<p>在IP通信中如果某个IP包因为某种原因未能达到目标地址，那么这个具体的原因将由
+ICMP 负责通知。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/IP/" rel="tag"># IP</a>
+              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" rel="tag"># 计算机网络</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/04/12/TCP%E7%9B%B8%E5%85%B3%E5%86%85%E5%AE%B9/" rel="prev" title="TCP相关知识点">
+      <i class="fa fa-chevron-left"></i> TCP相关知识点
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ip%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="nav-number">1.</span> <span class="nav-text">IP基础知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E5%A7%8Bip%E5%9C%B0%E5%9D%80%E8%A1%A8%E7%A4%BA"><span class="nav-number">1.1.</span> <span class="nav-text">原始IP地址表示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%90%E7%BD%91%E5%88%92%E5%88%86"><span class="nav-number">1.2.</span> <span class="nav-text">子网划分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A0%E5%88%86%E7%B1%BB%E7%BC%96%E5%9D%80cidrclassless-inter-domain-routing"><span class="nav-number">1.3.</span> <span class="nav-text">无分类编址CIDR（Classless
+Inter-Domain Routing）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AC%E6%9C%89ip%E5%92%8C%E7%A7%81%E6%9C%89ip"><span class="nav-number">1.4.</span> <span class="nav-text">公有IP和私有IP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ip%E8%BD%AC%E5%8F%91"><span class="nav-number">1.5.</span> <span class="nav-text">IP转发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ip%E5%88%86%E7%89%87%E4%B8%8E%E9%87%8D%E7%BB%84"><span class="nav-number">1.6.</span> <span class="nav-text">IP分片与重组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ipv6"><span class="nav-number">1.7.</span> <span class="nav-text">IPv6</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ip%E5%8D%8F%E8%AE%AE%E7%9B%B8%E5%85%B3%E6%8A%80%E6%9C%AF"><span class="nav-number">2.</span> <span class="nav-text">IP协议相关技术</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90dns"><span class="nav-number">2.1.</span> <span class="nav-text">域名解析DNS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#arp%E4%B8%8Erarp"><span class="nav-number">2.2.</span> <span class="nav-text">ARP与RARP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E8%8E%B7%E5%8F%96ip%E5%9C%B0%E5%9D%80dhcp"><span class="nav-number">2.3.</span> <span class="nav-text">动态获取IP地址DHCP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nat%E7%BD%91%E7%BB%9C%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2"><span class="nav-number">2.4.</span> <span class="nav-text">NAT网络地址转换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%92%E8%81%94%E7%BD%91%E6%8E%A7%E5%88%B6%E6%8A%A5%E6%96%87%E5%8D%8F%E8%AE%AEicmp"><span class="nav-number">2.5.</span> <span class="nav-text">互联网控制报文协议ICMP</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Tien"
+      src="https://avatars.githubusercontent.com/u/34372430?v=4">
+  <p class="site-author-name" itemprop="name">Tien</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Tien5770" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Tien5770" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/txvhuiu@163.com" title="E-Mail → txvhuiu@163.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tien</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">49k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">2:57</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+<div>
+<span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+<script>
+    var now = new Date();
+    function createtime() {
+        var grt= new Date("04/12/2023 09:00:00");
+        now.setTime(now.getTime()+250);
+        days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days);
+        hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours);
+        if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum);
+        mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;}
+        seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum);
+        snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;}
+        document.getElementById("timeDate").innerHTML = "本站已安全运行 "+dnum+" 天 ";
+        document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒";
+    }
+setInterval("createtime()",250);
+</script>
+</div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '50565f9d05a1db99e275',
+      clientSecret: 'de517846c9a00de3d47423aa775f62b0da777d2e',
+      repo        : 'Tien5770.github.io',
+      owner       : 'Tien5770',
+      admin       : ['Tien5770'],
+      id          : '158514e4ffad8d8c7fb554e3f1031485',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>
