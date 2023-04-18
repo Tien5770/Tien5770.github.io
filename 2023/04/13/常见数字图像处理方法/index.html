@@ -20,18 +20,18 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="复习一下…… 没有太详细的原理性内容 像素灰度变换 逐像素处理，变换每个像素的灰度 \[ L&#39; &#x3D; T(L)\in[0,255] \] 像素强度变化 根据变换函数\(T\)的不同，可以进行不同的处理。比如\(s&#x3D;clog(1+r)\)进行log变换，\(s&#x3D;cr^{\gamma}\)幂律变换，不同的变换函数对灰度值的处理如下图：   对比度变化 强度变化的目标是图像整">
+  <meta name="description" content="复习一下…… 没有太详细的原理性内容">
 <meta property="og:type" content="article">
 <meta property="og:title" content="常见数字图像处理方法">
 <meta property="og:url" content="http://example.com/2023/04/13/%E5%B8%B8%E8%A7%81%E6%95%B0%E5%AD%97%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95/index.html">
 <meta property="og:site_name" content="Tien&#39;s Blog">
-<meta property="og:description" content="复习一下…… 没有太详细的原理性内容 像素灰度变换 逐像素处理，变换每个像素的灰度 \[ L&#39; &#x3D; T(L)\in[0,255] \] 像素强度变化 根据变换函数\(T\)的不同，可以进行不同的处理。比如\(s&#x3D;clog(1+r)\)进行log变换，\(s&#x3D;cr^{\gamma}\)幂律变换，不同的变换函数对灰度值的处理如下图：   对比度变化 强度变化的目标是图像整">
+<meta property="og:description" content="复习一下…… 没有太详细的原理性内容">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/2023/04/13/%E5%B8%B8%E8%A7%81%E6%95%B0%E5%AD%97%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95/image-20230413230602186.png">
 <meta property="og:image" content="http://example.com/2023/04/13/%E5%B8%B8%E8%A7%81%E6%95%B0%E5%AD%97%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95/image-20230413230653534.png">
 <meta property="og:image" content="http://example.com/2023/04/13/%E5%B8%B8%E8%A7%81%E6%95%B0%E5%AD%97%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95/image-20230413231550073.png">
 <meta property="og:image" content="http://example.com/2023/04/13/%E5%B8%B8%E8%A7%81%E6%95%B0%E5%AD%97%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95/image-20230413232721211.png">
-<meta property="og:image" content="http://example.com/image-20230413232747578.png">
+<meta property="og:image" content="http://example.com/2023/04/13/%E5%B8%B8%E8%A7%81%E6%95%B0%E5%AD%97%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95/image-20230413232747578.png">
 <meta property="og:image" content="http://example.com/2023/04/13/%E5%B8%B8%E8%A7%81%E6%95%B0%E5%AD%97%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95/image-20230414001317105.png">
 <meta property="og:image" content="http://example.com/2023/04/13/%E5%B8%B8%E8%A7%81%E6%95%B0%E5%AD%97%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95/image-20230414003552429.png">
 <meta property="og:image" content="http://example.com/2023/04/13/%E5%B8%B8%E8%A7%81%E6%95%B0%E5%AD%97%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95/image-20230414003604307.png">
@@ -39,16 +39,17 @@
 <meta property="og:image" content="http://example.com/2023/04/13/%E5%B8%B8%E8%A7%81%E6%95%B0%E5%AD%97%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95/image-20230414003708726.png">
 <meta property="og:image" content="http://example.com/2023/04/13/%E5%B8%B8%E8%A7%81%E6%95%B0%E5%AD%97%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95/image-20230414003715839.png">
 <meta property="og:image" content="http://example.com/2023/04/13/%E5%B8%B8%E8%A7%81%E6%95%B0%E5%AD%97%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95/image-20230414004129353.png">
-<meta property="og:image" content="https://img-blog.csdn.net/20161110160457655">
-<meta property="og:image" content="https://img-blog.csdn.net/20161110161825931">
+<meta property="og:image" content="http://example.com/2023/04/13/%E5%B8%B8%E8%A7%81%E6%95%B0%E5%AD%97%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95/image-20230418153137201.png">
+<meta property="og:image" content="http://example.com/2023/04/13/%E5%B8%B8%E8%A7%81%E6%95%B0%E5%AD%97%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95/image-20230418153152744.png">
 <meta property="og:image" content="http://example.com/2023/04/13/%E5%B8%B8%E8%A7%81%E6%95%B0%E5%AD%97%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95/image-20230414090537781.png">
-<meta property="og:image" content="http://example.com/2023/04/13/%E5%B8%B8%E8%A7%81%E6%95%B0%E5%AD%97%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95/743748-20200316201751223-1640376449.png">
-<meta property="og:image" content="http://example.com/2023/04/13/%E5%B8%B8%E8%A7%81%E6%95%B0%E5%AD%97%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95/743748-20200316201821294-804762214.png">
+<meta property="og:image" content="http://example.com/2023/04/13/%E5%B8%B8%E8%A7%81%E6%95%B0%E5%AD%97%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95/image-20230418153418428.png">
 <meta property="og:image" content="http://example.com/2023/04/13/%E5%B8%B8%E8%A7%81%E6%95%B0%E5%AD%97%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95/image-20230414095303384.png">
 <meta property="og:image" content="http://example.com/2023/04/13/%E5%B8%B8%E8%A7%81%E6%95%B0%E5%AD%97%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95/image-20230414095720969.png">
 <meta property="og:image" content="http://example.com/2023/04/13/%E5%B8%B8%E8%A7%81%E6%95%B0%E5%AD%97%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95/image-20230414100123071.png">
 <meta property="og:image" content="http://example.com/2023/04/13/%E5%B8%B8%E8%A7%81%E6%95%B0%E5%AD%97%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95/image-20230414102127976.png">
 <meta property="og:image" content="http://example.com/2023/04/13/%E5%B8%B8%E8%A7%81%E6%95%B0%E5%AD%97%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95/image-20230414102334217.png">
+<meta property="og:image" content="http://example.com/2023/04/13/%E5%B8%B8%E8%A7%81%E6%95%B0%E5%AD%97%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95/image-20230418153456323.png">
+<meta property="og:image" content="http://example.com/2023/04/13/%E5%B8%B8%E8%A7%81%E6%95%B0%E5%AD%97%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95/image-20230418153512073.png">
 <meta property="og:image" content="http://example.com/2023/04/13/%E5%B8%B8%E8%A7%81%E6%95%B0%E5%AD%97%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95/image-20230417231208780.png">
 <meta property="og:image" content="http://example.com/2023/04/13/%E5%B8%B8%E8%A7%81%E6%95%B0%E5%AD%97%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95/image-20230417231238979.png">
 <meta property="og:image" content="http://example.com/2023/04/13/%E5%B8%B8%E8%A7%81%E6%95%B0%E5%AD%97%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95/image-20230417231302525.png">
@@ -57,7 +58,7 @@
 <meta property="og:image" content="http://example.com/2023/04/13/%E5%B8%B8%E8%A7%81%E6%95%B0%E5%AD%97%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95/image-20230418003044975.png">
 <meta property="og:image" content="http://example.com/2023/04/13/%E5%B8%B8%E8%A7%81%E6%95%B0%E5%AD%97%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95/image-20230418003129649.png">
 <meta property="article:published_time" content="2023-04-13T14:59:56.000Z">
-<meta property="article:modified_time" content="2023-04-18T07:01:06.872Z">
+<meta property="article:modified_time" content="2023-04-18T07:35:26.780Z">
 <meta property="article:author" content="Tien">
 <meta property="article:tag" content="数字图像处理">
 <meta property="article:tag" content="计算机视觉">
@@ -256,7 +257,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-04-18 15:01:06" itemprop="dateModified" datetime="2023-04-18T15:01:06+08:00">2023-04-18</time>
+                <time title="修改时间：2023-04-18 15:35:26" itemprop="dateModified" datetime="2023-04-18T15:35:26+08:00">2023-04-18</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -302,6 +303,7 @@
       
         <p>复习一下……</p>
 <p>没有太详细的原理性内容</p>
+<span id="more"></span>
 <h2 id="像素灰度变换">像素灰度变换</h2>
 <p>逐像素处理，变换每个像素的灰度 <span class="math display">\[
 L&#39; = T(L)\in[0,255]
@@ -325,7 +327,7 @@ class="math inline">\(s=cr^{\gamma}\)</span>幂律变换，不同的变换函数
 <h3 id="最近邻">最近邻</h3>
 <p><img src="image-20230413232721211.png" /></p>
 <h3 id="双线性插值">双线性插值</h3>
-<p><img src="\image-20230413232747578.png" /></p>
+<p><img src="image-20230413232747578.png" /></p>
 <h3 id="双三次插值">双三次插值</h3>
 <p>使用周围16个像素做插值，考虑一维情况： <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">X = &#123;<span class="number">10</span>,<span class="number">20</span>,<span class="number">30</span>,<span class="number">40</span>&#125;;</span><br></pre></td></tr></table></figure></p>
 <p>假设要求X[0.5]，很容易想到以距离为权重将四个像素值加权 <span
@@ -368,9 +370,7 @@ p&#39;=\sum_{i\in N(p)}w_ip_i
 \]</span> <span
 class="math inline">\(w\)</span>即为滤波核（或者叫模板，或者叫mask），根据滤波核数值不同可以分为<font color='A2CD5A'><strong>平滑滤波和锐化滤波</strong></font></p>
 <h4 id="高斯平滑滤波">高斯平滑滤波</h4>
-<p><img
-src="http://accu.cc/img/pil/spatial_filter_gaussian_blur/2.svg" /></p>
-<p>在二位空间中，该函数生成的曲面形式如下图：</p>
+<p>在二维空间中，该函数生成的曲面形式如下图：</p>
 <p><img src="image-20230414001317105.png" /></p>
 <p>因为越靠近原始像素权重越大，所以高斯平滑相对均值滤波能更好地保边</p>
 <p>实现中可以利用高斯滤波核的行列可分离去降低复杂度</p>
@@ -441,8 +441,8 @@ class="math inline">\(z\)</span>，得到具有指定直方图的图像</li>
 <p>腐蚀应用：去除图像细节</p>
 <p>开操作：先腐蚀再膨胀，能消除细小物体，在纤细处分离物体和平滑较大物体边界的作用</p>
 <p>闭操作：先膨胀再腐蚀，能填充物体内细小空洞，连接邻近物体和平滑边界</p>
-<p><img src="https://img-blog.csdn.net/20161110160457655" /></p>
-<p><img src="https://img-blog.csdn.net/20161110161825931" /></p>
+<p><img src="image-20230418153137201.png" /></p>
+<p><img src="image-20230418153152744.png" /></p>
 <h2 id="图像结构检测">图像结构检测</h2>
 <h3 id="canny边缘检测器">Canny边缘检测器</h3>
 <p>边缘检测的要求：检测准确、定位准确、单像素响应</p>
@@ -459,9 +459,13 @@ class="math inline">\(z\)</span>，得到具有指定直方图的图像</li>
 <p>图像空间中的一个点，对应k-b参数空间中的一条线，参数空间中每两条直线的交点可以在图像空间中确定一条直线，可以选择由较多直线汇成的点，其参数空间中的坐标值作为图像空间中直线方程参数</p>
 <p>问题：k-b参数空间无法描述垂直于x轴直线</p>
 <p>改进：极坐标系空间<span class="math inline">\(r-\theta\)</span></p>
-<p><img src="743748-20200316201751223-1640376449.png" /></p>
+<p><img src="image-20230418153418428.png" /></p>
+<blockquote>
+<p><a
+target="_blank" rel="noopener" href="https://blog.csdn.net/leonardohaig/article/details/87907462">霍夫变换直线检测（Line
+Detection）原理及示例</a></p>
+</blockquote>
 <p>变换后图像空间中的每个点映射为极坐标空间下的一条正弦曲线；图像空间中共线的点对应的正弦曲线相交于一点，然后做投票，选出局部极大值，再用阈值去过滤</p>
-<p><img src="743748-20200316201821294-804762214.png" /></p>
 <p>理论上只要能用参数方程表示的基元，都能转到霍夫空间做投票检测</p>
 <h2 id="图像特征">图像特征</h2>
 <p>特征点：能够被稳定检测（可重复）、易于匹配</p>
@@ -502,11 +506,9 @@ class="math inline">\(R\)</span>最大值点作为角 点</p>
 <p>高斯滤波器平滑图像+降采样平滑后图像，所以构建过程中损失了图像的细节信息</p>
 <p>拉普拉斯金字塔：</p>
 <p>金字塔的每层存储的是图像和平滑后图像的差值，最高层保留的是小图</p>
-<p><img
-src="https://img2020.cnblogs.com/blog/1335980/202006/1335980-20200624190156638-1029968041.jpg" /></p>
+<p><img src="image-20230418153456323.png" /></p>
 <p>由于拉普拉斯金字塔保留了是细节信息+最终小图，所以可以通过上采样+融合细节信息的方法进行图像恢复</p>
-<p><img
-src="https://img2020.cnblogs.com/blog/1335980/202006/1335980-20200624190205821-1754966059.jpg" /></p>
+<p><img src="image-20230418153512073.png" /></p>
 <h3 id="特征描述和匹配">特征描述和匹配</h3>
 <p>特征转换为特征描述，比如将特征所在局部图像块转换为描述特征的向量</p>
 <p>假如忽略几何变换（旋转、缩放等），可以使用的方法：</p>
