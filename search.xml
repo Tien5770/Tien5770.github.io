@@ -2711,6 +2711,41 @@ BY子句。如果一个简单的WHERE子句返回结果所花
       </tags>
   </entry>
   <entry>
+    <title>二分查找模板</title>
+    <url>/2023/04/12/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE%E6%A8%A1%E6%9D%BF/</url>
+    <content><![CDATA[<p>二分查找</p>
+<span id="more"></span>
+<p>假设目标值在闭区间<span
+class="math inline">\([l,r]\)</span>中，每次查找将区间长度缩小一半，当<span
+class="math inline">\(l=r\)</span>时，找到目标值</p>
+<p>模板1：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">bSearch1</span><span class="params">(<span class="type">int</span> l,<span class="type">int</span> r)</span></span>&#123;</span><br><span class="line">    <span class="keyword">while</span>(l&lt;r)&#123;</span><br><span class="line">        <span class="type">int</span> mid = (l+r)&gt;&gt;<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">if</span>(<span class="built_in">check</span>(mid)) r = mid;</span><br><span class="line">        <span class="keyword">else</span> l = mid+<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> l;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>模板2：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">bSearch2</span><span class="params">(<span class="type">int</span> l,<span class="type">int</span> r)</span></span>&#123;</span><br><span class="line">    <span class="keyword">while</span>(l&lt;r)&#123;</span><br><span class="line">        <span class="type">int</span> mid = (l+r+<span class="number">1</span>)&gt;&gt;<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">if</span>(<span class="built_in">check</span>(mid)) l = mid;</span><br><span class="line">        <span class="keyword">else</span> r = mid<span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> l;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>模板1就是在满足check()的区间内找到左边界，模板2在满足check()的区间内找到右边界。</p>
+<p>如果目标是下面这个v，那麽就必须使用模板 1</p>
+<p>................vooooooooo</p>
+<p>假设经由 check 划分后，整个区间的属性与目标v如下，则我们必须使用模板
+2</p>
+<p>oooooooov...................</p>
+<p>使用步骤：</p>
+<ol type="1">
+<li>确定check函数</li>
+<li>根据check的结果看区间更新方式是要更新左界还是右界</li>
+<li>如果是更新左界，则计算mid要+1</li>
+</ol>
+<p>求解立方根</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;iomanip&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;cmath&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> eps 0.0001f</span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">   <span class="type">double</span> a;</span><br><span class="line">   <span class="keyword">while</span>(cin&gt;&gt;a)&#123;</span><br><span class="line">    <span class="type">double</span> l = <span class="built_in">min</span>(<span class="number">-1.0</span>,a);</span><br><span class="line">    <span class="type">double</span> r = <span class="built_in">max</span>(<span class="number">1.0</span>,a);</span><br><span class="line">    <span class="keyword">while</span>(<span class="built_in">fabs</span>(r-l)&gt;eps)&#123;</span><br><span class="line">        <span class="type">double</span> mid = (l+r)/<span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span>(mid*mid*mid&lt;a)&#123;</span><br><span class="line">            l = mid;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> r = mid;</span><br><span class="line">    &#125;</span><br><span class="line">    cout &lt;&lt; <span class="built_in">setprecision</span>(<span class="number">1</span>) &lt;&lt; fixed &lt;&lt; l &lt;&lt; endl;</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>数据结构与算法</category>
+      </categories>
+      <tags>
+        <tag>算法</tag>
+        <tag>二分查找</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>【C++】右值、移动语义、完美转发</title>
     <url>/2023/04/18/%E5%8F%B3%E5%80%BC/</url>
     <content><![CDATA[<p>C++的移动语义和完美转发总结</p>
@@ -2816,41 +2851,6 @@ href="https://cntransgroup.github.io/EffectiveModernCppChinese/5.RRefMovSemPerfF
       </tags>
   </entry>
   <entry>
-    <title>二分查找模板</title>
-    <url>/2023/04/12/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE%E6%A8%A1%E6%9D%BF/</url>
-    <content><![CDATA[<p>二分查找</p>
-<span id="more"></span>
-<p>假设目标值在闭区间<span
-class="math inline">\([l,r]\)</span>中，每次查找将区间长度缩小一半，当<span
-class="math inline">\(l=r\)</span>时，找到目标值</p>
-<p>模板1：</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">bSearch1</span><span class="params">(<span class="type">int</span> l,<span class="type">int</span> r)</span></span>&#123;</span><br><span class="line">    <span class="keyword">while</span>(l&lt;r)&#123;</span><br><span class="line">        <span class="type">int</span> mid = (l+r)&gt;&gt;<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">if</span>(<span class="built_in">check</span>(mid)) r = mid;</span><br><span class="line">        <span class="keyword">else</span> l = mid+<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> l;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>模板2：</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">bSearch2</span><span class="params">(<span class="type">int</span> l,<span class="type">int</span> r)</span></span>&#123;</span><br><span class="line">    <span class="keyword">while</span>(l&lt;r)&#123;</span><br><span class="line">        <span class="type">int</span> mid = (l+r+<span class="number">1</span>)&gt;&gt;<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">if</span>(<span class="built_in">check</span>(mid)) l = mid;</span><br><span class="line">        <span class="keyword">else</span> r = mid<span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> l;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>模板1就是在满足check()的区间内找到左边界，模板2在满足check()的区间内找到右边界。</p>
-<p>如果目标是下面这个v，那麽就必须使用模板 1</p>
-<p>................vooooooooo</p>
-<p>假设经由 check 划分后，整个区间的属性与目标v如下，则我们必须使用模板
-2</p>
-<p>oooooooov...................</p>
-<p>使用步骤：</p>
-<ol type="1">
-<li>确定check函数</li>
-<li>根据check的结果看区间更新方式是要更新左界还是右界</li>
-<li>如果是更新左界，则计算mid要+1</li>
-</ol>
-<p>求解立方根</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;iomanip&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;cmath&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> eps 0.0001f</span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">   <span class="type">double</span> a;</span><br><span class="line">   <span class="keyword">while</span>(cin&gt;&gt;a)&#123;</span><br><span class="line">    <span class="type">double</span> l = <span class="built_in">min</span>(<span class="number">-1.0</span>,a);</span><br><span class="line">    <span class="type">double</span> r = <span class="built_in">max</span>(<span class="number">1.0</span>,a);</span><br><span class="line">    <span class="keyword">while</span>(<span class="built_in">fabs</span>(r-l)&gt;eps)&#123;</span><br><span class="line">        <span class="type">double</span> mid = (l+r)/<span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span>(mid*mid*mid&lt;a)&#123;</span><br><span class="line">            l = mid;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> r = mid;</span><br><span class="line">    &#125;</span><br><span class="line">    cout &lt;&lt; <span class="built_in">setprecision</span>(<span class="number">1</span>) &lt;&lt; fixed &lt;&lt; l &lt;&lt; endl;</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>数据结构与算法</category>
-      </categories>
-      <tags>
-        <tag>算法</tag>
-        <tag>二分查找</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>大根堆</title>
     <url>/2023/04/12/%E5%A4%A7%E6%A0%B9%E5%A0%86/</url>
     <content><![CDATA[<p>大根堆的插入与删除操作</p>
@@ -2915,6 +2915,83 @@ true ；否则，返回 false 。word 中可能包含一些 '.' ，每个 .
       <tags>
         <tag>数据结构</tag>
         <tag>字典树</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>【操作系统】进程间通信</title>
+    <url>/2023/04/18/%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1/</url>
+    <content><![CDATA[<p>​</p>
+<span id="more"></span>
+<h2 id="管道">管道</h2>
+<p>系统调用<code>int pipe(int fd[2])</code></p>
+<p>该调用创建的是一个匿名管道，参数是一个文件描述符数组，<code>fd[0]</code>是读端描述符，<code>fd[1]</code>是写端描述符。虽然用了文件描述符，但<font color='red'><strong>匿名管道存在于内存中，是内核里面的一串缓存。</strong></font></p>
+<p>管道用于进程间通信是利用了<code>fork()</code>创建的子进程会复制父进程的文件描述符，所以管道读写两端的文件描述符在父子进程中都存在，通过在同一个管道中写入或读取就可以实现通信</p>
+<p>管道是半双工的，但父子进程可能同时写入或同时读出，为了避免混乱，通常：</p>
+<ul>
+<li>父进程关闭<code>fd[0]</code></li>
+<li>子进程关闭<code>fd[1]</code></li>
+</ul>
+<p>如果要求双向通信，需要创建两个管道。</p>
+<p><font color='cornflowerblue'><strong>对于匿名管道，通信的范围是存在父子关系的进程</strong></font>，因为匿名管道没有实体，只能通过fork共享文件描述符，达到通信的目的。</p>
+<p>对于命名管道，可以在不相关的进程间进行通信，系统调用为<code>int mknod(const char *pathname, mode_t mode, dev_t dev);</code>创建了一个类型为管道的设备文件，在进程中只要使用这个设备文件就可以相互通信。</p>
+<p>缺点：</p>
+<ul>
+<li>管道是内核态的资源，访问时需要进行上下文切换，开销较大</li>
+<li>管道的工作方式：进程A将数据写入后会阻塞，等到数据被读完之后才会退出，通信效率较低</li>
+</ul>
+<h2 id="消息队列">消息队列</h2>
+<p><font color='cornflowerblue'><strong>消息队列是保存在内核中的消息列表</strong></font></p>
+<p>与管道的区别：</p>
+<ul>
+<li>使用方式不同，进程A向消息队列写入数据后，直接正常返回，进程B等需要的时候再去读取数据。</li>
+<li>发送数据方式不同，数据会被分为一个个独立的<font color='A2CD5A'><strong>消息体</strong></font>，消息体是用户自定义的、发送方和接收方约定好的数据类型，所以每个消息体都是固定大小的存储块。而管道是无格式的字节流数据。</li>
+<li>生命周期不同，消息队列的生命周期与内核相同，如果没有释放消息队列或者关闭OS，消息队列会一直存在。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>通信不及时</li>
+<li>消息队列和消息体都是有长度限制的（Linux内核中<code>MSGMNB</code>和<code>MSGMAX</code>宏定义），所以不适合比较大的数据的传输</li>
+<li>消息队列依然是内核态资源，写入和读取都会发生上下文切换，两个空间之间拷贝数据的过程</li>
+</ul>
+<h2 id="共享内存">共享内存</h2>
+<p>进程拥有自己独立的虚拟内存地址空间，访问的虚拟内存地址通过地址映射得到物理内存地址。如果两个进程各自有一块虚拟地址空间，映射后的物理地址是相同的，那么就可以实现进程间的通信。</p>
+<p><img src="image-20230418200649464.png" /></p>
+<blockquote>
+<p>source:<a
+href="https://zhuanlan.zhihu.com/p/165224175">小林coding</a></p>
+</blockquote>
+<p>这种方式的进程通信，避免了上下文切换和数据的拷贝，提高了通信效率。</p>
+<p>但是出现多进程竞争共享资源的问题</p>
+<h2 id="信号量">信号量</h2>
+<p><font color='cornflowerblue'><strong>信号量是一种保护机制，用于实现进程间的互斥与同步，并不直接用于进程间通信数据的传输。</strong></font></p>
+<p>信号量的控制方式有两种原子操作：</p>
+<ul>
+<li>P操作：信号量-1，如果操作后&lt;0，阻塞进程</li>
+<li>V操作：信号量+1，如果操作后&lt;=0，说明当前有被阻塞进程，将其唤醒</li>
+</ul>
+<p><font color='A2CD5A'><strong>如果信号量初值为1，则其为互斥信号量</strong></font>，保证了每个时刻只有一个进程在访问共享资源，这时进程访问贡献资源前执行P，访问结束后执行V。</p>
+<p><font color='A2CD5A'><strong>如果信号量初值为0，则其为同步信号量</strong></font>，需要先执行的进程，执行完之后进行V操作；后执行的进程，执行前进行P操作。</p>
+<h2 id="信号">信号</h2>
+<p><font color='cornflowerblue'><strong>信号是进程间通信在异常情况下的工作模式</strong></font></p>
+<p>信号是进程间通信机制中唯一的异步通信机制，可以在任何时候发送信号给某一进程，一旦有信号产生，用户进程对信号的处理方式有如下几种：</p>
+<ul>
+<li>执行默认操作</li>
+<li>捕捉信号</li>
+<li>忽略信号</li>
+</ul>
+<h2 id="socket">Socket</h2>
+<p>Socket能够在同主机不同进程之间，或不同主机的进程之间通信</p>
+<p>使用socket在本主机不同进程间通信时，<code>domain</code>参数应该设置为<code>PF_UNIX</code></p>
+<p><code>bind</code>绑定的地址应该是<code>sockaddr_un</code>类型</p>
+<p>创建本地通信socket部分代码：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//server</span></span><br><span class="line"><span class="type">const</span> <span class="type">char</span>* file_name;</span><br><span class="line"><span class="type">int</span> fd = socket(PF_UNIX,SOCK_STREAM,<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_un</span> <span class="title">addr</span>;</span></span><br><span class="line"><span class="built_in">memset</span>(&amp;addr,<span class="number">0</span>,<span class="keyword">sizeof</span>(addr));</span><br><span class="line">addr.sin_family = AF_UNIX;</span><br><span class="line"><span class="built_in">strcpy</span>(addr.sun_path,file_name);</span><br><span class="line"><span class="type">int</span> len = offsetof(<span class="keyword">struct</span> sockaddr_un,sun_path)+<span class="built_in">strlen</span>(file_name);</span><br><span class="line"></span><br><span class="line">bind(fd,(<span class="keyword">struct</span> sockaddr*)&amp;addr,len);</span><br><span class="line">listen(fd,<span class="number">5</span>);</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>操作系统</category>
+      </categories>
+      <tags>
+        <tag>操作系统</tag>
+        <tag>进程通信</tag>
       </tags>
   </entry>
   <entry>
