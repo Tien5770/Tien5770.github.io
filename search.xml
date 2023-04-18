@@ -1,172 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>IP相关内容</title>
-    <url>/2023/04/17/IP%E7%9B%B8%E5%85%B3%E5%86%85%E5%AE%B9/</url>
-    <content><![CDATA[<p>这里是摘要</p>
-<span id="more"></span>
-<h2 id="ip基础知识">IP基础知识</h2>
-<h3 id="原始ip地址表示">原始IP地址表示</h3>
-<p>格式：<font color='cornflowerblue'><strong>32位</strong></font>正整数，<font color='cornflowerblue'><strong>点分十进制</strong></font>方便记忆</p>
-<p>分类：ABCDE，D类是多播地址（用于将包发给特定组内的所有主机），E类留用。ABCDE类前两位分别为0，10，110，1110，1111</p>
-<p>特殊IP地址：<font color='A2CD5A'><strong>主机号全为1</strong></font>——指定某个网络下所有主机，用于广播；<font color='A2CD5A'><strong>主机号全为0</strong></font>——指定某个网络</p>
-<p>多播地址：</p>
-<ul>
-<li>224.0.0.0 ~ 224.0.0.255
-为预留的组播地址，只能在局域网中，路由器是不会进行转发的。</li>
-<li>224.0.1.0 ~ 238.255.255.255 为用户可用的组播地址，可以用于 Internet
-上。</li>
-<li>239.0.0.0 ~ 239.255.255.255
-为本地管理组播地址，可供内部网在内部使用，仅在特定的本地范围内有效。</li>
-</ul>
-<p>IP地址分类的优缺点：</p>
-<ul>
-<li><font color='cornflowerblue'><strong>通过最多前4位就能确定地址类型</strong></font>，然后进而能够快速划分网络号和主机号，简单明了</li>
-<li><font color='red'><strong>同一网络下没有地址层次</strong></font>，灵活性不足</li>
-<li>与现实网络的匹配度不好，C类地址一个网络下只有200+个，而B类地址一个网络下6W+个</li>
-</ul>
-<h3 id="子网划分">子网划分</h3>
-<p>子网是指在网络号的基础上，进一步将网络内主机进行划分，所以需要从主机号中借用若干位作为子网号。<strong>要使用子网，必须配置子网掩码</strong>。子网掩码中对应网络号（默认网络号+子网网络号）的位全为1。</p>
-<p>基本的子网划分中，比如借走两位主机号，只能划分4-2=2个子网，这是因为全0和全1不使用。</p>
-<p>外界是感知不到子网的存在的</p>
-<p><img
-src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/IP/16.jpg" /></p>
-<h3
-id="无分类编址cidrclassless-inter-domain-routing">无分类编址CIDR（Classless
-Inter-Domain Routing）</h3>
-<p>不再对地址类型进行区分，也没有划分子网的概念</p>
-<p>32位IP总共有两部分组成：网络前缀+主机号</p>
-<p>表示形式：<font color='cornflowerblue'><strong>a.b.c.d/x</strong></font>，其中x说明前x位是网络前缀</p>
-<p>CIDR中不会将主机号全0和全1的地址排除不使用</p>
-<p>CIDR表示法给出任何一个IP地址，就相当于给出了一个CIDR地址块，这是由连续的IP地址组成的，所以CIDR表示法构成了超网，实现了路由聚合，即从一个IP地址就可以得知一个CIDR地址块。（通过x的大小确定32位中表示网络的前缀，将主机号置0或置1就可得到最小或最大地址）</p>
-<h3 id="公有ip和私有ip">公有IP和私有IP</h3>
-<p><img
-src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/IP/22.jpg" /></p>
-<p>A B C类IP地址中有公有IP和私有IP之分</p>
-<p>公有IP由专门的IP地址分配机构统一分配，在整个互联网范围内保持唯一</p>
-<p>私有IP由组织内部管理，可以重复</p>
-<h3 id="ip转发">IP转发</h3>
-<p>转发过程中，主机与路由器的区别在于主机对不是自身生成的数据报会丢弃；而路由器会进行转发</p>
-<p>简单情况下，对一个主机，如果与目的地点到点连接或共享网络，那么IP数据报直接发送到目的地，不需要使用路由器。否则，主机将数据报发送到默认路由器，由该路由器进行交付。（直接交付）</p>
-<p>转发过程中需要用到的关键信息存储在<font color='cornflowerblue'><strong>路由表</strong></font>中，表中一个条目<span
-class="math inline">\(e_j\)</span>包含以下字段：</p>
-<ul>
-<li>目的地址<span class="math inline">\(d_j\)</span></li>
-<li>掩码<span class="math inline">\(m_j\)</span></li>
-<li>下一跳<span class="math inline">\(n_j\)</span></li>
-<li>接口</li>
-</ul>
-<p>当接收到数据报时，首先提取目的IP地址<span
-class="math inline">\(D\)</span>,查找转发表，如果有直接匹配的目的地址，转发给下一跳的地址</p>
-<p>如果没有直接匹配的表项，计算网络前缀<span
-class="math inline">\(d=(D\and m_{j})\)</span>，</p>
-<p>如果是非本地网络，<span class="math inline">\(d\)</span>与<span
-class="math inline">\(d_j\)</span>比较网络前缀，如果找到前缀匹配（最长前缀匹配）的，则转发到下一跳；如果没找到匹配的，转发给默认路由；如果没有默认路由，报错</p>
-<p><font color='A2CD5A'><strong>（最长前缀匹配的含义是首先网络地址要先对的上，然后再找最长的，不是说直接看网络地址里有多少位相同，比如下图的例子）</strong></font></p>
-<p><img src="image-20230417230944181.png" /></p>
-<p><img src="image-20230417231004872.png" /></p>
-<p><img src="image-20230417231027927.png" /></p>
-<p><img src="image-20230417231050856.png" /></p>
-<p><font color='red'><strong>（当使用环回地址时，数据报是不会流向网络的，在机器内部进行处理转发）</strong></font></p>
-<h3 id="ip分片与重组">IP分片与重组</h3>
-<p>当IP数据报大小大于MTU时，就会进行分片</p>
-<p>重组的工作由目标主机完成，路由器不负责重组</p>
-<p>之前在TCP里提过，为什么存在MTU的情况下要在TCP层设置MSS再分片，因为如果只在IP层分片，那么一个分片丢失之后，IP层没有超时重传，而是在TCP层超时重传，所以重传的是整个数据包。如果TCP有分片，那么只需要重传丢失的分片即可。</p>
-<h3 id="ipv6">IPv6</h3>
-<p>128位地址，16位一组，由冒号隔开</p>
-<p>连续的0可以将其省略，用两个冒号隔开，但是，一个 IP
-地址中只允许出现一次两个连续的冒号。</p>
-<p><img
-src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/IP/28.jpg" /></p>
-<p>IPv6亮点：</p>
-<ul>
-<li>可自动配置，即使没有 DHCP 服务器也可以实现自动分配IP地址</li>
-<li>包头包首部长度采用固定的值 <code>40</code>
-字节，去掉了包头校验和，简化了首部结构（没有选项字段），减轻了路由器负荷（不允许路由器分片与重组），大大<strong>提高了传输的性能</strong></li>
-<li>有应对伪造 IP
-地址的网络安全功能以及防止线路窃听的功能，大大<strong>提升了安全性</strong></li>
-</ul>
-<h2 id="ip协议相关技术">IP协议相关技术</h2>
-<h3 id="域名解析dns">域名解析DNS</h3>
-<p><font color='cornflowerblue'><strong>进行域名和IP地址的转换</strong></font></p>
-<p>工作流程：</p>
-<ul>
-<li>浏览器先检查自身缓存，是否有与域名对应的IP</li>
-<li>如果没有会检查操作系统域名解析文件(hosts)</li>
-<li>还是没有，会向本地DNS服务器发起查询请求</li>
-<li>本地DNS服务器检查自己的缓存，有就返回，没有会去向根域名服务器请求</li>
-<li>根域名服务器不会直接返回解析结果，而是将一个顶级域名服务器地址返回给本地DNS服务器</li>
-<li>本地DNS再去向顶级域名服务器查询，顶级域名服务器会返回区域权威DNS服务器地址</li>
-<li>本地DNS服务器再去向权威DNS服务器查询，后者将查询结果返回</li>
-<li>本地DNS再将该IP返回给客户端</li>
-</ul>
-<h3 id="arp与rarp">ARP与RARP</h3>
-<p><font color='cornflowerblue'><strong>ARP:
-已知IP地址，获得对应的MAC地址</strong></font></p>
-<ul>
-<li>广播发送ARP请求，其中包含了源IP地址，源MAC地址，目的IP地址</li>
-<li>所有设备收到ARP请求后，会提取目的IP与自己的IP比较，如果一致，就会在ARP响应中写入自己的MAC地址，然后送回</li>
-</ul>
-<p>操作系统获取到MAC之后一般会缓存一段时间</p>
-<p><font color='cornflowerblue'><strong>RARP:
-已知MAC地址，获得对应的IP地址</strong></font></p>
-<p>通常这需要架设一台 <code>RARP</code> 服务器，在这个服务器上注册设备的
-MAC 地址及其 IP 地址。</p>
-<p>设备接入网络后：</p>
-<ul>
-<li>发送请求，请求中包含自己的MAC</li>
-<li>RARP收到请求后会将对应IP返回给设备</li>
-</ul>
-<h3 id="动态获取ip地址dhcp">动态获取IP地址DHCP</h3>
-<p>DHCP全程使用UDP广播通信</p>
-<p>DHCP客户端监听68端口，而服务端监听的是67端口</p>
-<p>工作流程：</p>
-<ul>
-<li>客户端首先发起DHCP发现报文，该报文是IP数据报，但是现在没有IP地址，也没有DHCP服务器地址，所以使用<font color='cornflowerblue'><strong>UDP广播</strong></font>，<font color='A2CD5A'><strong>源IP地址设置为0.0.0.0，广播目的地址为255.255.255.255</strong></font></li>
-<li>DHCP收到DHCP DISCOVER，用DHCP提供报文进行响应，该报文仍然使用 IP
-广播地址 255.255.255.255，该报文信息携带服务器提供可租约的 IP
-地址、子网掩码、默认网关、DNS
-服务器以及<font color='cornflowerblue'><strong>IP
-地址租用期</strong></font>。</li>
-<li>客户端收到一个或多个服务器的 DHCP
-提供报文后，从中选择一个服务器，并向选中的服务器发送<font color='cornflowerblue'>
-<strong>DHCP 请求报文（DHCP
-REQUEST）</strong></font>进行响应，回显配置的参数。</li>
-<li>最后，服务端用 <font color='cornflowerblue'><strong>DHCP ACK
-</strong></font>报文对 DHCP 请求报文进行响应，应答所要求的参数。</li>
-</ul>
-<p>IP租用期控制的是DHCP服务器分配的IP地址的使用时限，快到期时会向服务器发送请求进行租期延长</p>
-<p>为了解决路由器不转发广播包的问题，设置了DHCP中继代理，对不同网段的 IP
-地址分配也可以由一个 DHCP 服务器统一进行管理。</p>
-<p><img
-src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/IP/37.jpg" /></p>
-<h3 id="nat网络地址转换">NAT网络地址转换</h3>
-<p>缓解IPv4地址耗尽的问题</p>
-<p>网络地址端口转换<code>NAPT</code>（Network Address Port
-Translation）则是把内部地址映射到外部网络的一个IP地址的<font color='red'><strong>不同端口</strong></font>上。</p>
-<p>映射时自动生成路由器的转换表，问题：</p>
-<ul>
-<li>外部无法主动与 NAT 内部服务器建立连接，因为 NAPT
-转换表没有转换记录。</li>
-<li>转换表的生成与转换操作都会产生性能开销。</li>
-<li>通信过程中，如果 NAT 路由器重启了，所有的 TCP 连接都将被重置。</li>
-</ul>
-<p>NAT穿透：设备主动获得公有IP，为自己建立端口映射条目，然后使用这个条目对外通讯</p>
-<h3 id="互联网控制报文协议icmp">互联网控制报文协议ICMP</h3>
-<p>功能：差错报文——回应网络错误，查询报文——查询网络信息</p>
-<p>ICMP虽然是网络层协议，但实际上是使用IP协议进行发送</p>
-<p>在IP通信中如果某个IP包因为某种原因未能达到目标地址，那么这个具体的原因将由
-ICMP 负责通知。</p>
-]]></content>
-      <categories>
-        <category>计算机网络</category>
-      </categories>
-      <tags>
-        <tag>IP</tag>
-        <tag>计算机网络</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>TCP相关知识点</title>
     <url>/2023/04/12/TCP%E7%9B%B8%E5%85%B3%E5%86%85%E5%AE%B9/</url>
     <content><![CDATA[<p>整理一下看过的TCP相关的内容，主要是顺着小林coding里的要点看下来的，有些不太明白的地方去《TCP/IP详解
@@ -507,6 +341,172 @@ cwnd + SMSS*SMSS/cwnd.这个式子化简一下就是cwnd = cwnd + (1/k)*SMSS</p>
       <tags>
         <tag>计算机网络</tag>
         <tag>TCP</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>IP相关内容</title>
+    <url>/2023/04/17/IP%E7%9B%B8%E5%85%B3%E5%86%85%E5%AE%B9/</url>
+    <content><![CDATA[<p>这里是摘要</p>
+<span id="more"></span>
+<h2 id="ip基础知识">IP基础知识</h2>
+<h3 id="原始ip地址表示">原始IP地址表示</h3>
+<p>格式：<font color='cornflowerblue'><strong>32位</strong></font>正整数，<font color='cornflowerblue'><strong>点分十进制</strong></font>方便记忆</p>
+<p>分类：ABCDE，D类是多播地址（用于将包发给特定组内的所有主机），E类留用。ABCDE类前两位分别为0，10，110，1110，1111</p>
+<p>特殊IP地址：<font color='A2CD5A'><strong>主机号全为1</strong></font>——指定某个网络下所有主机，用于广播；<font color='A2CD5A'><strong>主机号全为0</strong></font>——指定某个网络</p>
+<p>多播地址：</p>
+<ul>
+<li>224.0.0.0 ~ 224.0.0.255
+为预留的组播地址，只能在局域网中，路由器是不会进行转发的。</li>
+<li>224.0.1.0 ~ 238.255.255.255 为用户可用的组播地址，可以用于 Internet
+上。</li>
+<li>239.0.0.0 ~ 239.255.255.255
+为本地管理组播地址，可供内部网在内部使用，仅在特定的本地范围内有效。</li>
+</ul>
+<p>IP地址分类的优缺点：</p>
+<ul>
+<li><font color='cornflowerblue'><strong>通过最多前4位就能确定地址类型</strong></font>，然后进而能够快速划分网络号和主机号，简单明了</li>
+<li><font color='red'><strong>同一网络下没有地址层次</strong></font>，灵活性不足</li>
+<li>与现实网络的匹配度不好，C类地址一个网络下只有200+个，而B类地址一个网络下6W+个</li>
+</ul>
+<h3 id="子网划分">子网划分</h3>
+<p>子网是指在网络号的基础上，进一步将网络内主机进行划分，所以需要从主机号中借用若干位作为子网号。<strong>要使用子网，必须配置子网掩码</strong>。子网掩码中对应网络号（默认网络号+子网网络号）的位全为1。</p>
+<p>基本的子网划分中，比如借走两位主机号，只能划分4-2=2个子网，这是因为全0和全1不使用。</p>
+<p>外界是感知不到子网的存在的</p>
+<p><img
+src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/IP/16.jpg" /></p>
+<h3
+id="无分类编址cidrclassless-inter-domain-routing">无分类编址CIDR（Classless
+Inter-Domain Routing）</h3>
+<p>不再对地址类型进行区分，也没有划分子网的概念</p>
+<p>32位IP总共有两部分组成：网络前缀+主机号</p>
+<p>表示形式：<font color='cornflowerblue'><strong>a.b.c.d/x</strong></font>，其中x说明前x位是网络前缀</p>
+<p>CIDR中不会将主机号全0和全1的地址排除不使用</p>
+<p>CIDR表示法给出任何一个IP地址，就相当于给出了一个CIDR地址块，这是由连续的IP地址组成的，所以CIDR表示法构成了超网，实现了路由聚合，即从一个IP地址就可以得知一个CIDR地址块。（通过x的大小确定32位中表示网络的前缀，将主机号置0或置1就可得到最小或最大地址）</p>
+<h3 id="公有ip和私有ip">公有IP和私有IP</h3>
+<p><img
+src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/IP/22.jpg" /></p>
+<p>A B C类IP地址中有公有IP和私有IP之分</p>
+<p>公有IP由专门的IP地址分配机构统一分配，在整个互联网范围内保持唯一</p>
+<p>私有IP由组织内部管理，可以重复</p>
+<h3 id="ip转发">IP转发</h3>
+<p>转发过程中，主机与路由器的区别在于主机对不是自身生成的数据报会丢弃；而路由器会进行转发</p>
+<p>简单情况下，对一个主机，如果与目的地点到点连接或共享网络，那么IP数据报直接发送到目的地，不需要使用路由器。否则，主机将数据报发送到默认路由器，由该路由器进行交付。（直接交付）</p>
+<p>转发过程中需要用到的关键信息存储在<font color='cornflowerblue'><strong>路由表</strong></font>中，表中一个条目<span
+class="math inline">\(e_j\)</span>包含以下字段：</p>
+<ul>
+<li>目的地址<span class="math inline">\(d_j\)</span></li>
+<li>掩码<span class="math inline">\(m_j\)</span></li>
+<li>下一跳<span class="math inline">\(n_j\)</span></li>
+<li>接口</li>
+</ul>
+<p>当接收到数据报时，首先提取目的IP地址<span
+class="math inline">\(D\)</span>,查找转发表，如果有直接匹配的目的地址，转发给下一跳的地址</p>
+<p>如果没有直接匹配的表项，计算网络前缀<span
+class="math inline">\(d=(D\and m_{j})\)</span>，</p>
+<p>如果是非本地网络，<span class="math inline">\(d\)</span>与<span
+class="math inline">\(d_j\)</span>比较网络前缀，如果找到前缀匹配（最长前缀匹配）的，则转发到下一跳；如果没找到匹配的，转发给默认路由；如果没有默认路由，报错</p>
+<p><font color='A2CD5A'><strong>（最长前缀匹配的含义是首先网络地址要先对的上，然后再找最长的，不是说直接看网络地址里有多少位相同，比如下图的例子）</strong></font></p>
+<p><img src="image-20230417230944181.png" /></p>
+<p><img src="image-20230417231004872.png" /></p>
+<p><img src="image-20230417231027927.png" /></p>
+<p><img src="image-20230417231050856.png" /></p>
+<p><font color='red'><strong>（当使用环回地址时，数据报是不会流向网络的，在机器内部进行处理转发）</strong></font></p>
+<h3 id="ip分片与重组">IP分片与重组</h3>
+<p>当IP数据报大小大于MTU时，就会进行分片</p>
+<p>重组的工作由目标主机完成，路由器不负责重组</p>
+<p>之前在TCP里提过，为什么存在MTU的情况下要在TCP层设置MSS再分片，因为如果只在IP层分片，那么一个分片丢失之后，IP层没有超时重传，而是在TCP层超时重传，所以重传的是整个数据包。如果TCP有分片，那么只需要重传丢失的分片即可。</p>
+<h3 id="ipv6">IPv6</h3>
+<p>128位地址，16位一组，由冒号隔开</p>
+<p>连续的0可以将其省略，用两个冒号隔开，但是，一个 IP
+地址中只允许出现一次两个连续的冒号。</p>
+<p><img
+src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/IP/28.jpg" /></p>
+<p>IPv6亮点：</p>
+<ul>
+<li>可自动配置，即使没有 DHCP 服务器也可以实现自动分配IP地址</li>
+<li>包头包首部长度采用固定的值 <code>40</code>
+字节，去掉了包头校验和，简化了首部结构（没有选项字段），减轻了路由器负荷（不允许路由器分片与重组），大大<strong>提高了传输的性能</strong></li>
+<li>有应对伪造 IP
+地址的网络安全功能以及防止线路窃听的功能，大大<strong>提升了安全性</strong></li>
+</ul>
+<h2 id="ip协议相关技术">IP协议相关技术</h2>
+<h3 id="域名解析dns">域名解析DNS</h3>
+<p><font color='cornflowerblue'><strong>进行域名和IP地址的转换</strong></font></p>
+<p>工作流程：</p>
+<ul>
+<li>浏览器先检查自身缓存，是否有与域名对应的IP</li>
+<li>如果没有会检查操作系统域名解析文件(hosts)</li>
+<li>还是没有，会向本地DNS服务器发起查询请求</li>
+<li>本地DNS服务器检查自己的缓存，有就返回，没有会去向根域名服务器请求</li>
+<li>根域名服务器不会直接返回解析结果，而是将一个顶级域名服务器地址返回给本地DNS服务器</li>
+<li>本地DNS再去向顶级域名服务器查询，顶级域名服务器会返回区域权威DNS服务器地址</li>
+<li>本地DNS服务器再去向权威DNS服务器查询，后者将查询结果返回</li>
+<li>本地DNS再将该IP返回给客户端</li>
+</ul>
+<h3 id="arp与rarp">ARP与RARP</h3>
+<p><font color='cornflowerblue'><strong>ARP:
+已知IP地址，获得对应的MAC地址</strong></font></p>
+<ul>
+<li>广播发送ARP请求，其中包含了源IP地址，源MAC地址，目的IP地址</li>
+<li>所有设备收到ARP请求后，会提取目的IP与自己的IP比较，如果一致，就会在ARP响应中写入自己的MAC地址，然后送回</li>
+</ul>
+<p>操作系统获取到MAC之后一般会缓存一段时间</p>
+<p><font color='cornflowerblue'><strong>RARP:
+已知MAC地址，获得对应的IP地址</strong></font></p>
+<p>通常这需要架设一台 <code>RARP</code> 服务器，在这个服务器上注册设备的
+MAC 地址及其 IP 地址。</p>
+<p>设备接入网络后：</p>
+<ul>
+<li>发送请求，请求中包含自己的MAC</li>
+<li>RARP收到请求后会将对应IP返回给设备</li>
+</ul>
+<h3 id="动态获取ip地址dhcp">动态获取IP地址DHCP</h3>
+<p>DHCP全程使用UDP广播通信</p>
+<p>DHCP客户端监听68端口，而服务端监听的是67端口</p>
+<p>工作流程：</p>
+<ul>
+<li>客户端首先发起DHCP发现报文，该报文是IP数据报，但是现在没有IP地址，也没有DHCP服务器地址，所以使用<font color='cornflowerblue'><strong>UDP广播</strong></font>，<font color='A2CD5A'><strong>源IP地址设置为0.0.0.0，广播目的地址为255.255.255.255</strong></font></li>
+<li>DHCP收到DHCP DISCOVER，用DHCP提供报文进行响应，该报文仍然使用 IP
+广播地址 255.255.255.255，该报文信息携带服务器提供可租约的 IP
+地址、子网掩码、默认网关、DNS
+服务器以及<font color='cornflowerblue'><strong>IP
+地址租用期</strong></font>。</li>
+<li>客户端收到一个或多个服务器的 DHCP
+提供报文后，从中选择一个服务器，并向选中的服务器发送<font color='cornflowerblue'>
+<strong>DHCP 请求报文（DHCP
+REQUEST）</strong></font>进行响应，回显配置的参数。</li>
+<li>最后，服务端用 <font color='cornflowerblue'><strong>DHCP ACK
+</strong></font>报文对 DHCP 请求报文进行响应，应答所要求的参数。</li>
+</ul>
+<p>IP租用期控制的是DHCP服务器分配的IP地址的使用时限，快到期时会向服务器发送请求进行租期延长</p>
+<p>为了解决路由器不转发广播包的问题，设置了DHCP中继代理，对不同网段的 IP
+地址分配也可以由一个 DHCP 服务器统一进行管理。</p>
+<p><img
+src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/IP/37.jpg" /></p>
+<h3 id="nat网络地址转换">NAT网络地址转换</h3>
+<p>缓解IPv4地址耗尽的问题</p>
+<p>网络地址端口转换<code>NAPT</code>（Network Address Port
+Translation）则是把内部地址映射到外部网络的一个IP地址的<font color='red'><strong>不同端口</strong></font>上。</p>
+<p>映射时自动生成路由器的转换表，问题：</p>
+<ul>
+<li>外部无法主动与 NAT 内部服务器建立连接，因为 NAPT
+转换表没有转换记录。</li>
+<li>转换表的生成与转换操作都会产生性能开销。</li>
+<li>通信过程中，如果 NAT 路由器重启了，所有的 TCP 连接都将被重置。</li>
+</ul>
+<p>NAT穿透：设备主动获得公有IP，为自己建立端口映射条目，然后使用这个条目对外通讯</p>
+<h3 id="互联网控制报文协议icmp">互联网控制报文协议ICMP</h3>
+<p>功能：差错报文——回应网络错误，查询报文——查询网络信息</p>
+<p>ICMP虽然是网络层协议，但实际上是使用IP协议进行发送</p>
+<p>在IP通信中如果某个IP包因为某种原因未能达到目标地址，那么这个具体的原因将由
+ICMP 负责通知。</p>
+]]></content>
+      <categories>
+        <category>计算机网络</category>
+      </categories>
+      <tags>
+        <tag>计算机网络</tag>
+        <tag>IP</tag>
       </tags>
   </entry>
   <entry>
@@ -2301,6 +2301,41 @@ mutable关键字</p>
       </tags>
   </entry>
   <entry>
+    <title>二分查找模板</title>
+    <url>/2023/04/12/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE%E6%A8%A1%E6%9D%BF/</url>
+    <content><![CDATA[<p>二分查找</p>
+<span id="more"></span>
+<p>假设目标值在闭区间<span
+class="math inline">\([l,r]\)</span>中，每次查找将区间长度缩小一半，当<span
+class="math inline">\(l=r\)</span>时，找到目标值</p>
+<p>模板1：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">bSearch1</span><span class="params">(<span class="type">int</span> l,<span class="type">int</span> r)</span></span>&#123;</span><br><span class="line">    <span class="keyword">while</span>(l&lt;r)&#123;</span><br><span class="line">        <span class="type">int</span> mid = (l+r)&gt;&gt;<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">if</span>(<span class="built_in">check</span>(mid)) r = mid;</span><br><span class="line">        <span class="keyword">else</span> l = mid+<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> l;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>模板2：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">bSearch2</span><span class="params">(<span class="type">int</span> l,<span class="type">int</span> r)</span></span>&#123;</span><br><span class="line">    <span class="keyword">while</span>(l&lt;r)&#123;</span><br><span class="line">        <span class="type">int</span> mid = (l+r+<span class="number">1</span>)&gt;&gt;<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">if</span>(<span class="built_in">check</span>(mid)) l = mid;</span><br><span class="line">        <span class="keyword">else</span> r = mid<span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> l;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>模板1就是在满足check()的区间内找到左边界，模板2在满足check()的区间内找到右边界。</p>
+<p>如果目标是下面这个v，那麽就必须使用模板 1</p>
+<p>................vooooooooo</p>
+<p>假设经由 check 划分后，整个区间的属性与目标v如下，则我们必须使用模板
+2</p>
+<p>oooooooov...................</p>
+<p>使用步骤：</p>
+<ol type="1">
+<li>确定check函数</li>
+<li>根据check的结果看区间更新方式是要更新左界还是右界</li>
+<li>如果是更新左界，则计算mid要+1</li>
+</ol>
+<p>求解立方根</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;iomanip&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;cmath&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> eps 0.0001f</span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">   <span class="type">double</span> a;</span><br><span class="line">   <span class="keyword">while</span>(cin&gt;&gt;a)&#123;</span><br><span class="line">    <span class="type">double</span> l = <span class="built_in">min</span>(<span class="number">-1.0</span>,a);</span><br><span class="line">    <span class="type">double</span> r = <span class="built_in">max</span>(<span class="number">1.0</span>,a);</span><br><span class="line">    <span class="keyword">while</span>(<span class="built_in">fabs</span>(r-l)&gt;eps)&#123;</span><br><span class="line">        <span class="type">double</span> mid = (l+r)/<span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span>(mid*mid*mid&lt;a)&#123;</span><br><span class="line">            l = mid;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> r = mid;</span><br><span class="line">    &#125;</span><br><span class="line">    cout &lt;&lt; <span class="built_in">setprecision</span>(<span class="number">1</span>) &lt;&lt; fixed &lt;&lt; l &lt;&lt; endl;</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>数据结构与算法</category>
+      </categories>
+      <tags>
+        <tag>算法</tag>
+        <tag>二分查找</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>《MySQL必知必会》笔记</title>
     <url>/2023/04/12/%E3%80%8AMySQL%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A%E3%80%8B%E7%AC%94%E8%AE%B0/</url>
     <content><![CDATA[<p>《MySQL必知必会》笔记</p>
@@ -2711,38 +2746,108 @@ BY子句。如果一个简单的WHERE子句返回结果所花
       </tags>
   </entry>
   <entry>
-    <title>二分查找模板</title>
-    <url>/2023/04/12/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE%E6%A8%A1%E6%9D%BF/</url>
-    <content><![CDATA[<p>二分查找</p>
+    <title>【C++】右值、移动语义、完美转发</title>
+    <url>/2023/04/18/%E5%8F%B3%E5%80%BC/</url>
+    <content><![CDATA[<p>C++的移动语义和完美转发总结</p>
 <span id="more"></span>
-<p>假设目标值在闭区间<span
-class="math inline">\([l,r]\)</span>中，每次查找将区间长度缩小一半，当<span
-class="math inline">\(l=r\)</span>时，找到目标值</p>
-<p>模板1：</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">bSearch1</span><span class="params">(<span class="type">int</span> l,<span class="type">int</span> r)</span></span>&#123;</span><br><span class="line">    <span class="keyword">while</span>(l&lt;r)&#123;</span><br><span class="line">        <span class="type">int</span> mid = (l+r)&gt;&gt;<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">if</span>(<span class="built_in">check</span>(mid)) r = mid;</span><br><span class="line">        <span class="keyword">else</span> l = mid+<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> l;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>模板2：</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">bSearch2</span><span class="params">(<span class="type">int</span> l,<span class="type">int</span> r)</span></span>&#123;</span><br><span class="line">    <span class="keyword">while</span>(l&lt;r)&#123;</span><br><span class="line">        <span class="type">int</span> mid = (l+r+<span class="number">1</span>)&gt;&gt;<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">if</span>(<span class="built_in">check</span>(mid)) l = mid;</span><br><span class="line">        <span class="keyword">else</span> r = mid<span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> l;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>模板1就是在满足check()的区间内找到左边界，模板2在满足check()的区间内找到右边界。</p>
-<p>如果目标是下面这个v，那麽就必须使用模板 1</p>
-<p>................vooooooooo</p>
-<p>假设经由 check 划分后，整个区间的属性与目标v如下，则我们必须使用模板
-2</p>
-<p>oooooooov...................</p>
-<p>使用步骤：</p>
-<ol type="1">
-<li>确定check函数</li>
-<li>根据check的结果看区间更新方式是要更新左界还是右界</li>
-<li>如果是更新左界，则计算mid要+1</li>
-</ol>
-<p>求解立方根</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;iomanip&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;cmath&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> eps 0.0001f</span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">   <span class="type">double</span> a;</span><br><span class="line">   <span class="keyword">while</span>(cin&gt;&gt;a)&#123;</span><br><span class="line">    <span class="type">double</span> l = <span class="built_in">min</span>(<span class="number">-1.0</span>,a);</span><br><span class="line">    <span class="type">double</span> r = <span class="built_in">max</span>(<span class="number">1.0</span>,a);</span><br><span class="line">    <span class="keyword">while</span>(<span class="built_in">fabs</span>(r-l)&gt;eps)&#123;</span><br><span class="line">        <span class="type">double</span> mid = (l+r)/<span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span>(mid*mid*mid&lt;a)&#123;</span><br><span class="line">            l = mid;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> r = mid;</span><br><span class="line">    &#125;</span><br><span class="line">    cout &lt;&lt; <span class="built_in">setprecision</span>(<span class="number">1</span>) &lt;&lt; fixed &lt;&lt; l &lt;&lt; endl;</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="右值是什么">右值是什么</h2>
+<p>一般而言，一个左值表达式表示的是一个对象的身份（在内存中的位置），而一个右值表达式表示的是对象的值（内容）。从生命周期上看，左值在表达式结束后依然存在，而右值是表达式结束后就不再存在的临时对象。</p>
+<p>根据上边的内容，区分左值和右值最简单的方法是：<font color='cornflowerblue'><strong>有名字的对象、能取地址的是左值；匿名对象、不能取地址的为右值</strong></font></p>
+<p>右值又能分为<font color='cornflowerblue'><strong>纯右值（prvalue）和将亡值（xvalue）</strong></font></p>
+<ul>
+<li>纯右值：纯右值是下列表达式之一：对该表达式求值能够（1）计算某个运算符的操作数的值；（2）初始化某个对象的值。比如，字面量、lambda表达式、返回的临时变量等</li>
+<li>将亡值：代表它的资源能够被重新使用的对象或位域的泛左值。通常与右值引用相关，指将要被移动的对象，比如std::move返回值、返回类型为右值引用的函数返回值等。</li>
+</ul>
+<blockquote>
+<p>参考：<a
+href="https://en.cppreference.com/w/cpp/language/value_category">Value
+categories - cppreference.com</a></p>
+</blockquote>
+<p>举个例子</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function">string <span class="title">helloworld</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">string</span>(<span class="string">&quot;hello world&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    string ret = <span class="built_in">helloworld</span>();</span><br><span class="line">    cout&lt;&lt;<span class="built_in">helloworld</span>()&lt;&lt;endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>helloworld()就是个右值，ret是个左值。在代码里使用的其实是helloworld()的值，对ret赋值结束后不再存在。</p>
+<h2 id="右值引用是什么">右值引用是什么</h2>
+<p>引用就是对变量的别名，右值引用就是对右值起一个别名</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line"><span class="type">int</span>&amp; ri = i;</span><br><span class="line"><span class="type">int</span>&amp;&amp; rri = <span class="number">0</span>;<span class="comment">//右值引用</span></span><br></pre></td></tr></table></figure>
+<p>可以看到，普通的引用要求绑定到一个左值上，如果用int&amp; ri =
+0;这样的写法会报错，而右值引用则可以。可绑定类型的值总结一下：</p>
+<ul>
+<li>左值引用：只能绑定到非const左值（如果允许绑定常量左值和常量右值，意味着可以修改被绑定的值，与const定义不符）</li>
+<li>右值引用：只能绑定到非const右值</li>
+<li>常量左值引用：这个是万能的引用，既可以<font color='cornflowerblue'><strong>绑定到所有类型的值</strong></font></li>
+</ul>
+<p>之前提到过，右值在表达式结束后就被销毁，但是右值引用会给被绑定到的右值延长生命周期，变得与右值引用相同。</p>
+<h2 id="万能引用">万能引用</h2>
+<p>概念：使用<code>T&amp;&amp;</code>类型的形参既能绑定右值，又能绑定左值。</p>
+<p>前边不是说右值引用只能绑定到非const右值吗，为什么这里能绑定左值？因为之前的情况中T是一个具体的类型，T&amp;&amp;确定为右值引用。<font color='red'><strong>在发生类型推导的时候，T&amp;&amp;表示万能引用（universal
+reference）</strong></font></p>
+<p>万能引用T&amp;&amp;的类型推导规则，<font color='red'><strong>以int为例，当传入实参为左值时，T被推导为int&amp;
+;当传入实参为右值时，T被推导为非引用类型int。</strong></font></p>
+<blockquote>
+<p>If a variable or parameter is declared to have type
+<strong><code>T&amp;&amp;</code></strong> for some <strong>deduced
+type</strong> <code>T</code>, that variable or parameter is a
+<em>universal reference</em>.</p>
+<p><a
+href="https://isocpp.org/blog/2012/11/universal-references-in-c11-scott-meyers">Universal
+References in C++11 -- Scott Meyers : Standard C++ (isocpp.org)</a></p>
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">func</span><span class="params">(T&amp;&amp; param)</span> </span>&#123;&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">int</span> i = <span class="number">42</span>;</span><br><span class="line">  <span class="built_in">func</span>(<span class="number">42</span>);<span class="comment">// 右值</span></span><br><span class="line">  <span class="built_in">func</span>(i);<span class="comment">// 左值</span></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="引用折叠">引用折叠</h2>
+<p>万能引用之所以万能，在于使用模板推导和引用折叠的规则，生成不同的实例化模板接收传进来的参数</p>
+<p>引用折叠的核心是，正常情况下C++不允许定义引用的引用，但C++编译器在某些情境下（<font color='cornflowerblue'><strong>模板实例化、auto类型推导、创建和运用typedef和别名声明、decltype</strong></font>）有可能会定义引用的引用这种形式，这时会形成引用折叠。</p>
+<p>还是用上边的例子解释，根据之前提到的万能引用的推导规则，如果用左值去传递参数，实例化的模板：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">func</span><span class="params">(<span class="type">int</span>&amp; &amp;&amp; param)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>这里出现了”引用的引用“，但是编译器不能对这个代码报错，因为在正常编写源代码时调用的形式是合理的，所以C++11之后就用引用折叠去处理这种情况。有两种类型的引用，那么引用的引用应该有四种可能的组合，引用折叠只有两条规则去应对这些组合：</p>
+<ul>
+<li>右值引用折叠到右值引用（T &amp;&amp; &amp;&amp;）还是右值引用</li>
+<li>所有其他引用类型之间的折叠（T&amp; &amp;，T&amp;
+&amp;&amp;，T&amp;&amp; &amp;）都是左值引用</li>
+</ul>
+<h2 id="移动语义">移动语义</h2>
+<p>如果类中有动态分配的内存，则必须使用<font color='A2CD5A'><strong>深拷贝</strong></font>进行拷贝构造，否则可能出现空悬指针的问题（A和B中两个指针指向同一内存，B析构释放了该内存，但A仍然存在）</p>
+<p>问题在于，深拷贝有些时候会造成不必要的性能开销，比如：有个函数func，返回值为B，然后要用B去构造A，之后B就不会再使用了。这时候还要用B去做深拷贝？为啥不能直接继续用B？</p>
+<p>所以很自然的联想到右值引用延长生命周期的作用，就有了专门的移动构造函数去接收右值引用参数。<font color='cornflowerblue'><strong>移动构造参数避免深拷贝的做法是将指针转移到被构造对象上，然后对参数对象的指针置空，避免了空悬指针的出现</strong></font></p>
+<p>上面是用右值作为参数去构造的，如果有个左值，后面不会再使用了，能不能也用类似的方式拿来构造一个新对象？</p>
+<p><font color='cornflowerblue'><strong>C++11提供了std::move()将左值转换为右值</strong></font>，然后再去做移动语义</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">TestClass a;</span><br><span class="line"><span class="function">TestClass <span class="title">b</span><span class="params">(a)</span></span>;<span class="comment">//调用拷贝构造函数</span></span><br><span class="line"><span class="function">TestClass <span class="title">c</span><span class="params">(std::move(a))</span></span>;<span class="comment">//调用移动构造函数</span></span><br></pre></td></tr></table></figure>
+<p>move的源码如下，可以看到move其实没有真正的去移动两个对象的内容，而是强制地将传入的内容转换为一个右值引用</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Ty</span>&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">remove_reference</span> &#123;</span><br><span class="line">    <span class="keyword">using</span> type                 = _Ty;</span><br><span class="line">    <span class="keyword">using</span> _Const_thru_ref_type = <span class="type">const</span> _Ty;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Ty</span>&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">remove_reference</span>&lt;_Ty&amp;&gt; &#123;</span><br><span class="line">    <span class="keyword">using</span> type                 = _Ty;</span><br><span class="line">    <span class="keyword">using</span> _Const_thru_ref_type = <span class="type">const</span> _Ty&amp;;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Ty</span>&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">remove_reference</span>&lt;_Ty&amp;&amp;&gt; &#123;</span><br><span class="line">    <span class="keyword">using</span> type                 = _Ty;</span><br><span class="line">    <span class="keyword">using</span> _Const_thru_ref_type = <span class="type">const</span> _Ty&amp;&amp;;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Ty</span>&gt;</span><br><span class="line"><span class="keyword">using</span> <span class="type">remove_reference_t</span> = <span class="keyword">typename</span> remove_reference&lt;_Ty&gt;::type;</span><br></pre></td></tr></table></figure>
+<h2 id="完美转发">完美转发</h2>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">func</span><span class="params">(T&amp; param)</span> </span>&#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;lvalue&quot;</span> &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">func</span><span class="params">(T&amp;&amp; param)</span> </span>&#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;rvalue&quot;</span> &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">warp</span><span class="params">(T&amp;&amp; param)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">func</span>(param);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> i = <span class="number">42</span>;</span><br><span class="line">    <span class="built_in">warp</span>(i);<span class="comment">//&quot;lvalue&quot;</span></span><br><span class="line">    <span class="built_in">warp</span>(<span class="number">42</span>);<span class="comment">//&quot;lvalue&quot;</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个例子里，理想的情况是warp(42)应该全程是进行参数为右值引用的调用，但实际的输出说明在经过warp函数后，再调用func时右值变为了左值。</p>
+<p>问题在于，warp(42)接收到的实参确实是右值，其推断的形参类型为右值引用int&amp;&amp;，右值引用是说<font color='cornflowerblue'><strong>被绑定的变量是个右值，而引用本身是一个左值</strong></font>，所以再去调用func的时候会按照左值去使用。</p>
+<p>为了解决这个问题，引入了std::forward()</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Ty</span>&gt;</span><br><span class="line"><span class="function">_NODISCARD <span class="keyword">constexpr</span> _Ty&amp;&amp; <span class="title">forward</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="type">remove_reference_t</span>&lt;_Ty&gt;&amp; _Arg)</span> <span class="keyword">noexcept</span> </span>&#123; </span><br><span class="line">    <span class="comment">// forward an lvalue as either an lvalue or an rvalue</span></span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">static_cast</span>&lt;_Ty&amp;&amp;&gt;(_Arg);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Ty</span>&gt;</span><br><span class="line"><span class="function">_NODISCARD <span class="keyword">constexpr</span> _Ty&amp;&amp; <span class="title">forward</span><span class="params">(<span class="type">remove_reference_t</span>&lt;_Ty&gt;&amp;&amp; _Arg)</span> <span class="keyword">noexcept</span> </span>&#123; </span><br><span class="line">    <span class="comment">// forward an rvalue as an rvalue</span></span><br><span class="line">    <span class="built_in">static_assert</span>(!is_lvalue_reference_v&lt;_Ty&gt;, <span class="string">&quot;bad forward call&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">static_cast</span>&lt;_Ty&amp;&amp;&gt;(_Arg);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以下都以int为例说明，</p>
+<p>如果传入<code>warp</code>的是左值，<code>std::forward</code>接受的是一个左值引用，这里_Ty被推导为int&amp;类型，被实例化为接受和返回左值引用。内部的转换不做任何事。</p>
+<p>如果传入<code>warp</code>的是右值，<code>std::forward</code>接受的是一个右值引用，这里_Ty被推导为int类型，被实例化为接受和返回右值引用。内部的转换不做任何事。</p>
+<p>MSVC这个实现里有个注释”forward an lvalue as either an lvalue or an
+rvalue“，这个是对传入的是左值<font color='red'><strong>（forward传入的是左值，不是引用类型）</strong></font>说的，如果传入的是左值，_Ty被推导为int，那个最后返回的类型是int&amp;&amp;,这个作用就相当于<code>std::move()</code>（但是真的会有人这么用吗……）</p>
+<p>那么之前的例子可以改写，从而实现真正的根据参数是左值还是右值进行调用</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;type_traits&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">func</span><span class="params">(T&amp; param)</span> </span>&#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;lvalue&quot;</span> &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">func</span><span class="params">(T&amp;&amp; param)</span> </span>&#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;rvalue&quot;</span> &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">warp</span><span class="params">(T&amp;&amp; param)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">func</span>(std::forward&lt;T&gt;(param));</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> i = <span class="number">42</span>;</span><br><span class="line">    <span class="built_in">warp</span>(i);<span class="comment">//&quot;lvalue&quot;</span></span><br><span class="line">    <span class="built_in">warp</span>(<span class="number">42</span>);<span class="comment">//&quot;rvalue&quot;</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="移动vs拷贝">移动vs拷贝</h2>
+<p>之前提到移动是为了避免不必要的深拷贝造成的时间开销，从而提高性能，那移动一定比拷贝要快吗？</p>
+<p>不一定，移动快的原因是直接把指针的所有权转移，如果数据类型没有指针，比如基础类型，或者STL中的array，移动和拷贝是等价的。都还是要对元素进行”搬家“。</p>
+<h2 id="参考">参考</h2>
+<p><a
+href="https://en.cppreference.com/w/cpp/language/value_category">Value
+categories - cppreference.com</a></p>
+<p><a
+href="https://isocpp.org/blog/2012/11/universal-references-in-c11-scott-meyers">Universal
+References in C++11 -- Scott Meyers : Standard C++ (isocpp.org)</a></p>
+<p><a
+href="https://yngzmiao.blog.csdn.net/article/details/105598036">右值引用、移动语义、完美转发下篇</a></p>
+<p><a
+href="https://cntransgroup.github.io/EffectiveModernCppChinese/5.RRefMovSemPerfForw/item28.html">理解引用折叠
+- Effective Modern C++</a></p>
 ]]></content>
       <categories>
-        <category>数据结构与算法</category>
+        <category>C++</category>
       </categories>
       <tags>
-        <tag>算法</tag>
-        <tag>二分查找</tag>
+        <tag>编程语言</tag>
+        <tag>C++</tag>
       </tags>
   </entry>
   <entry>
@@ -2813,10 +2918,323 @@ true ；否则，返回 false 。word 中可能包含一些 '.' ，每个 .
       </tags>
   </entry>
   <entry>
-    <title>额</title>
-    <url>/2023/04/12/%E9%A2%9D/</url>
-    <content><![CDATA[<p>之前的blog换电脑没了，吐了</p>
+    <title>常见数字图像处理方法</title>
+    <url>/2023/04/13/%E5%B8%B8%E8%A7%81%E6%95%B0%E5%AD%97%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>复习一下……</p>
+<p>没有太详细的原理性内容</p>
+<h2 id="像素灰度变换">像素灰度变换</h2>
+<p>逐像素处理，变换每个像素的灰度 <span class="math display">\[
+L&#39; = T(L)\in[0,255]
+\]</span></p>
+<h3 id="像素强度变化">像素强度变化</h3>
+<p>根据变换函数<span
+class="math inline">\(T\)</span>的不同，可以进行不同的处理。比如<span
+class="math inline">\(s=clog(1+r)\)</span>进行log变换，<span
+class="math inline">\(s=cr^{\gamma}\)</span>幂律变换，不同的变换函数对灰度值的处理如下图：</p>
+<p><img src="image-20230413230602186.png" /></p>
+<p><img src="image-20230413230653534.png" /></p>
+<h3 id="对比度变化">对比度变化</h3>
+<p>强度变化的目标是图像整体变亮或者变暗，而对比度调整是让亮的更亮，暗的更暗（对比度增强）</p>
+<p><strong>对比度拉伸</strong></p>
+<p><img src="image-20230413231550073.png" /></p>
+<p>左上：函数形式；右上：原图；左下：对比度拉伸的结果；右下：阈值化的结果</p>
+<p>在matlab里，可以使用imadjust函数去调整对比度范围</p>
+<figure class="highlight matlab"><table><tr><td class="code"><pre><span class="line">f1=imadjust（f，[low_in  high_in],[low_out  high_out],<span class="built_in">gamma</span>）</span><br></pre></td></tr></table></figure>
+<p>参数2为输入像素强度范围，参数3为输出像素强度范围，将较大的灰度值变化区间压缩为较小的灰度值变化区间就能降低图片对比度，反之可以增强对比度。输入范围可以stretchlim函数自动确定。</p>
+<h2 id="缩放">缩放</h2>
+<h3 id="最近邻">最近邻</h3>
+<p><img src="image-20230413232721211.png" /></p>
+<h3 id="双线性插值">双线性插值</h3>
+<p><img src="\image-20230413232747578.png" /></p>
+<h3 id="双三次插值">双三次插值</h3>
+<p>使用周围16个像素做插值，考虑一维情况： <figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">X = &#123;<span class="number">10</span>,<span class="number">20</span>,<span class="number">30</span>,<span class="number">40</span>&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>假设要求X[0.5]，很容易想到以距离为权重将四个像素值加权 <span
+class="math display">\[
+X[0.5]=\omega(1.5)X[-1]+\omega(0.5)X[0]+\omega(-0.5)X[1]+\omega(-1.5)X[2]
+\]</span> 在双三次插值法中，权重通常为 <span class="math display">\[
+\omega(x)=\left\{
+\begin{aligned}
+&amp;(a+2)|x|^3-(a+3)|x|^2+1 &amp;\quad|x|\le1 \\
+&amp;a|x|^3-5a|x|^2+8a|x|-4a &amp;\quad1&lt;|x|&lt;2 \\
+&amp;0 &amp;\quad |x|&gt;2
+\end{aligned}
+\right.
+\]</span></p>
+<h2 id="图像几何操作">图像几何操作</h2>
+<p>齐次坐标+变换矩阵</p>
+<figure>
+<img
+src="D:\projects\blog\blog\source_posts\常见数字图像处理方法\image-20230413235226719.png"
+alt="image-20230413235226719" />
+<figcaption aria-hidden="true">image-20230413235226719</figcaption>
+</figure>
+<p>2D仿射变换：线性变换+平移变换</p>
+<p>刚性变换：只包含平移+旋转</p>
+<p>相似变换：只包含平移、旋转、等比缩放</p>
+<h2 id="空间滤波">空间滤波</h2>
+<p>在源图像上逐像素移动滤波器，通过事先定义的关系计算滤波器响应值，结果为目标图像对应位置的像素值</p>
+<p>均值滤波、最大值滤波、中值滤波比较简单，跳过原理</p>
+<p>快速均值滤波：用积分图快速计算出对应滤波范围内的像素值之和</p>
+<p>均值滤波：降噪，但模糊边缘</p>
+<p>中值滤波：去除椒盐噪声</p>
+<p>边界值处理：滤波核有可能落在图像区域之外</p>
+<ul>
+<li>填充（常数或者镜像）</li>
+<li>边界处调整滤波核大小</li>
+</ul>
+<h3 id="线性滤波">线性滤波</h3>
+<p>邻域像素加权平均 <span class="math display">\[
+p&#39;=\sum_{i\in N(p)}w_ip_i
+\]</span> <span
+class="math inline">\(w\)</span>即为滤波核（或者叫模板，或者叫mask），根据滤波核数值不同可以分为<font color='A2CD5A'><strong>平滑滤波和锐化滤波</strong></font></p>
+<h4 id="高斯平滑滤波">高斯平滑滤波</h4>
+<p><img
+src="http://accu.cc/img/pil/spatial_filter_gaussian_blur/2.svg" /></p>
+<p>在二位空间中，该函数生成的曲面形式如下图：</p>
+<p><img src="image-20230414001317105.png" /></p>
+<p>因为越靠近原始像素权重越大，所以高斯平滑相对均值滤波能更好地保边</p>
+<p>实现中可以利用高斯滤波核的行列可分离去降低复杂度</p>
+<h4 id="基本锐化滤波">基本锐化滤波</h4>
+<p>锐化滤波核的特点：滤波核和为0，中心为正数，边缘为负数</p>
+<p>滤波后可能出现负值或者大于255，要进行比例变换或者截断</p>
+<p>体现的是图像的变化情况，比如用于边缘检测</p>
+<h4 id="梯度滤波器">梯度滤波器</h4>
+<p>图像一阶导：<span
+class="math inline">\(f&#39;(x)=f(x+1)-f(x)\)</span></p>
+<p>图像二阶导：<span
+class="math inline">\(f&#39;(x)=f(x+1)+f(x-1)-2f(x)\)</span></p>
+<p>一阶导数通常会产生较宽的边缘。
+二阶导数对于阶跃性边缘中心产生零交叉，而对于屋顶状边缘（细线），二阶导数取极值。
+二阶导数对细节有较强的响应，如细线和孤立噪声点。所以一般先进行高斯滤波去除噪声</p>
+<p>三种典型的一阶导（梯度）算子：Prewitt Robert Sobel</p>
+<p><img src="image-20230414003552429.png" /></p>
+<p><img src="image-20230414003604307.png" /></p>
+<p><img src="image-20230414003615026.png" /></p>
+<h4 id="拉普拉斯算子">拉普拉斯算子</h4>
+<p>定义为x,y方向上二阶导的和</p>
+<p><img src="image-20230414003708726.png" /></p>
+<p><img src="image-20230414003715839.png" /></p>
+<p>拉普拉斯算子可以做图像增强：先用拉普拉斯算子做图像滤波，得到边缘信息，然后再与原图叠加，就能得到锐化之后的图像</p>
+<h4 id="双边滤波">双边滤波</h4>
+<p>高斯滤波虽然相对于均值滤波一定程度上保边效果更好，但是也会模糊边缘</p>
+<p>双边滤波在计算权重的时候，不仅考虑了空间位置关系，也考虑了像素颜色的差值</p>
+<p><img src="image-20230414004129353.png" /></p>
+<p>像素之间的颜色差与权重成反比关系</p>
+<h2 id="直方图">直方图</h2>
+<p>直方图是所有像素灰度在图像中出现的概率，逐项求和为1</p>
+<h3 id="直方图均衡化">直方图均衡化</h3>
+<p>把一个直方图分布比较集中的图像进行变换，将其直方图变为在全部灰度范围内均匀分布。做法是对每个图像像素重新确定其像素值，对图像做非线性拉伸。</p>
+<p>假设输入为0-255范围的灰度图，每个灰度的概率函数为 <span
+class="math display">\[
+p(k)=\frac{n}{m}
+\]</span> 对每个灰度为k的像素，其直方图均衡化结果<span
+class="math inline">\(s\)</span>为 <span class="math display">\[
+s = 255*\sum_{i=0}^{k}p(i)
+\]</span></p>
+<h3 id="直方图匹配">直方图匹配</h3>
+<p>输入：原始图像、指定的概率密度函数</p>
+<p>求解：具有规定形状的直方图的图像</p>
+<p>原理：不管原图像的直方图是什么形状，直方图均衡化后的直方图都是一样的。并且映射函数T规定为单调递增的，即变换后的直方图可以经过逆变换回到原直方图。</p>
+<p>步骤：</p>
+<ul>
+<li>计算原始图像直方图<span
+class="math inline">\(p(r)\)</span>，然后做直方图均衡化得到灰度<span
+class="math inline">\(s\)</span></li>
+<li>对给定形状的直方图做均衡化，得到原始像素值<span
+class="math inline">\(z\)</span>与变换后像素值<span
+class="math inline">\(G(z)\)</span>的映射并存储</li>
+<li>对<span class="math inline">\(s\)</span>，找最接近的<span
+class="math inline">\(G(z)\)</span>，然后根据上一步的映射进一步找对应的<span
+class="math inline">\(z\)</span>，存储<span
+class="math inline">\(s\)</span>到<span
+class="math inline">\(z\)</span>的映射</li>
+<li>使用上一步得到的映射，将灰度为<span
+class="math inline">\(s\)</span>的像素变换为灰度为<span
+class="math inline">\(z\)</span>，得到具有指定直方图的图像</li>
+</ul>
+<h2 id="膨胀和腐蚀">膨胀和腐蚀</h2>
+<p>概念和定义太麻烦不想写了，简单说就是核卷积平移过程中，膨胀是如果核覆盖区域与图像中要处理的连通域有交集，就将对应像素赋值为连通域内的值；腐蚀是如果核覆盖区域是连通域的子集，就将对应像素赋值为连通域内的值。</p>
+<p>膨胀和腐蚀都是用核跟原图去做卷积，假设图像中连通域是255，背景是0</p>
+<p>对于膨胀来说，求的是局部最大值，把核覆盖区域像素点的最大值赋给当前核中心的图像像素点。所以膨胀的结果会让图像中的连通域扩大</p>
+<p>腐蚀则是与膨胀相反的操作，求的是局部最小值，所以对于图像中的连通域会缩小一圈</p>
+<p>膨胀应用：桥接文字裂缝</p>
+<p>腐蚀应用：去除图像细节</p>
+<p>开操作：先腐蚀再膨胀，能消除细小物体，在纤细处分离物体和平滑较大物体边界的作用</p>
+<p>闭操作：先膨胀再腐蚀，能填充物体内细小空洞，连接邻近物体和平滑边界</p>
+<p><img src="https://img-blog.csdn.net/20161110160457655" /></p>
+<p><img src="https://img-blog.csdn.net/20161110161825931" /></p>
+<h2 id="图像结构检测">图像结构检测</h2>
+<h3 id="canny边缘检测器">Canny边缘检测器</h3>
+<p>边缘检测的要求：检测准确、定位准确、单像素响应</p>
+<p>步骤：</p>
+<ol type="1">
+<li><p>高斯滤波：降噪，因为Canny是使用梯度的，梯度对噪声敏感</p></li>
+<li><p>计算每个像素点的梯度值与方向（Sobel算子）</p>
+<p><img src="image-20230414090537781.png" /></p></li>
+<li><p>非极大值抑制：高斯模糊的过程中，边缘也有可能被模糊放大，为了检测出单像素宽度的边缘，需要非极大值抑制去“瘦”边，</p>
+<p>做法是：将当前像素的梯度强度与沿正负梯度方向上的两个相邻像素进行比较，如果当前像素的梯度强度与另外两个像素相比最大，则该像素点保留为边缘点（一般两个相邻像素的梯度会做线性插值）</p></li>
+<li><p>高低阈值判断边缘：对于抑制之后的像素，如果梯度值大于高阈值，确定为边缘；低于低阈值，非边缘；中间部分，如果像素与确定为边缘的像素点邻接，则判定为边缘点</p></li>
+</ol>
+<h3 id="霍夫变换直线检测">霍夫变换直线检测</h3>
+<p>图像空间中的一个点，对应k-b参数空间中的一条线，参数空间中每两条直线的交点可以在图像空间中确定一条直线，可以选择由较多直线汇成的点，其参数空间中的坐标值作为图像空间中直线方程参数</p>
+<p>问题：k-b参数空间无法描述垂直于x轴直线</p>
+<p>改进：极坐标系空间<span class="math inline">\(r-\theta\)</span></p>
+<p><img src="743748-20200316201751223-1640376449.png" /></p>
+<p>变换后图像空间中的每个点映射为极坐标空间下的一条正弦曲线；图像空间中共线的点对应的正弦曲线相交于一点，然后做投票，选出局部极大值，再用阈值去过滤</p>
+<p><img src="743748-20200316201821294-804762214.png" /></p>
+<p>理论上只要能用参数方程表示的基元，都能转到霍夫空间做投票检测</p>
+<h2 id="图像特征">图像特征</h2>
+<p>特征点：能够被稳定检测（可重复）、易于匹配</p>
+<h3 id="harris角点检测">Harris角点检测</h3>
+<p>根据的是角点的梯度特征：平坦处的点所有方向梯度是相同的，边缘点梯度至少有一个主方向，而角点处图像梯度至少有两个主方向</p>
+<p><img src="image-20230414095303384.png" /></p>
+<p>给的像素点<span
+class="math inline">\((x,y)\)</span>，用一个窗口发生平移去计算其不同方向的像素值变化：</p>
+<p><img src="image-20230414095720969.png" /></p>
+<p>用泰勒展开替换公式中的<span
+class="math inline">\(I(x+u,y+v)\)</span>,然后做化简改写为矩阵相乘的形式：
+<img src="image-20230414100123071.png" /></p>
+<p>Harris没有直接使用<span
+class="math inline">\(E\)</span>,而是对矩阵<span
+class="math inline">\(M\)</span>进行分析，因为我们希望的是<span
+class="math inline">\(M\)</span>能够使得<span
+class="math inline">\(u,v\)</span>变化时使<span
+class="math inline">\(E\)</span>的变化程度尽可能大。<span
+class="math inline">\(M\)</span>是一个二次型矩阵，可以将<span
+class="math inline">\(E\)</span>的二次型矩阵形式表示为为一个椭圆</p>
+<p><span
+class="math inline">\(M\)</span>的两个特征值反应了变化最快的方向和变化最慢的方向，如果是角点区域，则两个特征值都要足够大；而边缘区域应该是两个特征值一个很大一个很小</p>
+<p>Harris也没有直接去求特征值，而是定义了一个角点响应函数 <span
+class="math display">\[
+R=\lambda_1 \lambda_2 - k(\lambda_1 +\lambda_2)^2=det(M)-k(trace(M))^2
+\]</span> 检测出来以后可以对所有角点的<span
+class="math inline">\(R\)</span>响应 值进行排序，得到<span
+class="math inline">\(R\)</span> 值最大的 n
+个角点作为特征点；以及对一个局部区域取<span
+class="math inline">\(R\)</span>最大值点作为角 点</p>
+<p>Harris的问题在于对图像尺度变化敏感，某一个尺度上不是角点在另一个尺度可能是</p>
+<p><img src="image-20230414102127976.png" /></p>
+<h3 id="尺度空间图像金字塔">尺度空间/图像金字塔</h3>
+<p><img src="image-20230414102334217.png" /></p>
+<p>图像金字塔：</p>
+<p>对原始图像进行多尺度的采样，生成不同分辨率的图像，以金字塔方式排列，向上尺寸逐渐降低</p>
+<p>高斯金字塔：</p>
+<p>高斯滤波器平滑图像+降采样平滑后图像，所以构建过程中损失了图像的细节信息</p>
+<p>拉普拉斯金字塔：</p>
+<p>金字塔的每层存储的是图像和平滑后图像的差值，最高层保留的是小图</p>
+<p><img
+src="https://img2020.cnblogs.com/blog/1335980/202006/1335980-20200624190156638-1029968041.jpg" /></p>
+<p>由于拉普拉斯金字塔保留了是细节信息+最终小图，所以可以通过上采样+融合细节信息的方法进行图像恢复</p>
+<p><img
+src="https://img2020.cnblogs.com/blog/1335980/202006/1335980-20200624190205821-1754966059.jpg" /></p>
+<h3 id="特征描述和匹配">特征描述和匹配</h3>
+<p>特征转换为特征描述，比如将特征所在局部图像块转换为描述特征的向量</p>
+<p>假如忽略几何变换（旋转、缩放等），可以使用的方法：</p>
+<p>SSD(Sum of Square Difference)</p>
+<p><img src="image-20230417231208780.png" /></p>
+<p>SAD (Sum of Absolute Difference)</p>
+<p><img src="image-20230417231238979.png" /></p>
+<p>NCC (Normalized Cross Correlation)</p>
+<p><img src="image-20230417231302525.png" /></p>
+<h3 id="sift">SIFT</h3>
+<ol type="1">
+<li>构建高斯金字塔，不同于之前介绍的是，SIFT为了让尺度体现连续性，在金字塔每一层都包含了多张图像，这些图像合称为一个Octave，这些图像是使用不同参数做高斯模糊得到的。具体实现：(1)
+将原图像扩大一倍作为初始图像，将初始图像经参数为<span
+class="math inline">\(\sigma\)</span>的高斯平滑之后作为第1组金字塔的第2层，对第二层做参数为<span
+class="math inline">\(k\sigma\)</span>的高斯平滑作为第三层……，每次平滑参数都为上一次的<span
+class="math inline">\(k\)</span>倍，如此重复得到<span
+class="math inline">\(L\)</span>层的Octave；(2)
+将第1组倒数第三层图像做降采样大小减小为原来的一半，得到的图像作为第2组的初始图像，重复之前的过程。（3）继续重复，直到生成整个高斯金字塔</li>
+<li>计算高斯差分金字塔近似代替高斯-拉普拉斯金字塔</li>
+<li>空间极值点检测，每一个像素点与其26邻域进行比较，如果是一个极大或极小值，则选为初步的关键点。这里是在DoG中检测，所以如果要得到<span
+class="math inline">\(S\)</span>个尺度下的极值点，需要<span
+class="math inline">\(S+2\)</span>层DoG，则原始的高斯金字塔需要<span
+class="math inline">\(S+3\)</span>层。</li>
+<li>特征点精确定位：将DoG空间拟合，从而找到离散空间中极值点在连续空间中的位置。</li>
+<li>消除边缘响应。</li>
+<li>确定特征点主方向。统计关键点邻域内的像素梯度和方向，这里是将360°离散化成若干个区间，统计位于该区间的像素梯度。选择直方图最高的作为主方向（其他实现细节：只保留峰值大于主方向峰值80％的方向作为该关键点的辅方向；对于同一梯度值的多个峰值的关键点位置，在相同位置和尺度将会有多个关键点被创建但方向不同；离散的梯度方向直方图要进行插值拟合处理，来求得更精确的方向角度值等）</li>
+<li>特征点描述</li>
+</ol>
+<h2 id="ransac">RANSAC</h2>
+<p>从匹配样本中随机取样，寻找一致的样本点。</p>
+<p>先随机取4对匹配点，计算出单应矩阵<span
+class="math inline">\(H\)</span></p>
+<p>计算所有匹配样本在<span
+class="math inline">\(H\)</span>下的重投影误差，小于阈值的加入内点inliers集合</p>
+<p>如果内点集的size大于当前最优的内点集，更新最优</p>
+<p>重复上述步骤直到内点数量大于阈值要求，或者迭代了指定次数</p>
+<h2 id="三维视觉基础坐标系变换">三维视觉基础——坐标系变换</h2>
+<p>从三维模型点到图像上的像素点，一共涉及到四个坐标系之间的变换</p>
+<ul>
+<li>世界坐标系，原点视情况而定，比如可以在物体中心，单位为mm</li>
+<li>相机坐标系，原点在相机光心（针孔模型中的真空），z轴和光轴重合</li>
+<li>图像坐标系，原点在图像和相机光轴的交点处，这个坐标系就是二维坐标了</li>
+<li>像素坐标系，原点在图像左上角，就是平常在opencv做图像处理中的坐标系</li>
+</ul>
+<p><img
+src="https://www.guyuehome.com/Uploads/wp/2020/05/20190811171144302.png" /></p>
+<p>变换过程如下，其中r分量描述旋转，t分量描述平移，f为相机焦距，d为每个像素的长度</p>
+<p><img
+src="D:\projects\blog\blog\source_drafts\常见数字图像处理方法\image-20230418145841247.png" /></p>
+<h2 id="相机标定">相机标定</h2>
+<p><img src="image-20230418000855249.png" /></p>
+<p>用一个定标板，建立图示的坐标系，那么在三维空间下，定标板上每个点的坐标为<span
+class="math inline">\((x,y,0)\)</span></p>
+<p>从相机坐标系到理想图像坐标系： <span class="math display">\[
+x=K[R|t]X\\
+s[x,y,1]^T=K[r1,r2,r3,t][X,Y,0,1]^T\\
+s[x,y,1]^T=K[r1,r2,t][X,Y,1]^T
+\]</span></p>
+<p>从另一角度看（理想图像坐标系到实际图像坐标系），定标板在上图中的平面是从定标板原始平面变换得来的，假设变换矩阵为<span
+class="math inline">\(H\)</span>,那么<span
+class="math inline">\(H\)</span>可以通过二维点的对应求解： <span
+class="math display">\[
+x=H[X,Y,1]^T=[h1,h2,h3][X,Y,1]^T
+\]</span> 所以： <span class="math display">\[
+K[r1,r2,t]=[h1,h2,h3]\\
+K[r1,r2,t]=H
+\]</span> <span
+class="math inline">\(r1,r2\)</span>作为旋转矩阵的两列是单位正交的：
+<span class="math display">\[
+r1^Tr2=0\\
+r1^Tr1=r2^Tr2=1
+\]</span> 又根据<span
+class="math inline">\(K,H\)</span>之间的等式关系，可知 <span
+class="math display">\[
+r1=K^{-1}h1\\
+r2=K^{-1}h2\\
+\]</span> 带入<span class="math inline">\(r1,r2\)</span>关系中可得 <span
+class="math display">\[
+h1^TK^{-T}K^{-1}h2=0\\
+h1^TK^{-T}K^{-1}h1=h2^TK^{-T}K^{-1}h2=1
+\]</span> 令<span
+class="math inline">\(B=K^{-T}K^{-1}\)</span>,下边的过程直接从课件截图了，敲公式太麻烦：
+<img src="image-20230418003020324.png" /></p>
+<p><img src="image-20230418003044975.png" /></p>
+<p>1个<span class="math inline">\(H\)</span>提供2个对<span
+class="math inline">\(b\)</span>的约束，至少需要3个<span
+class="math inline">\(H\)</span>,所以要从多个不同角度拍摄标定板图像</p>
+<p><img src="image-20230418003129649.png" /></p>
+<p>总结过程：</p>
+<p>1.打印制作定标板；</p>
+<p>2.拍摄定标板在不同视角的多张图像（可以随意移动定标板或相机）；</p>
+<p>3.图像特征检测，并与定标板格点关联，建立3D-2D点对应；</p>
+<p>4.计算每张定标板图像对应的Homography变换<span
+class="math inline">\(H_i\)</span>；</p>
+<p>5.通过<span class="math inline">\(H_i\)</span>求解矩阵<span
+class="math inline">\(B\)</span></p>
+<p>6.通过<span class="math inline">\(B\)</span>计算内参矩阵<span
+class="math inline">\(K\)</span></p>
+<p>7.通过最小化投影误差进一步优化<span
+class="math inline">\(K\)</span></p>
 ]]></content>
+      <categories>
+        <category>数字图像处理</category>
+      </categories>
+      <tags>
+        <tag>数字图像处理</tag>
+        <tag>计算机视觉</tag>
+      </tags>
   </entry>
   <entry>
     <title>快速排序</title>
@@ -2838,5 +3256,11 @@ true ；否则，返回 false 。word 中可能包含一些 '.' ，每个 .
         <tag>算法</tag>
         <tag>排序</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>额</title>
+    <url>/2023/04/12/%E9%A2%9D/</url>
+    <content><![CDATA[<p>之前的blog换电脑没了，吐了</p>
+]]></content>
   </entry>
 </search>

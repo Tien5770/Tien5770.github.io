@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="C++的移动语义和完美转发总结">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【C++】右值、移动语义、完美转发">
+<meta property="og:url" content="http://example.com/2023/04/18/%E5%8F%B3%E5%80%BC/index.html">
+<meta property="og:site_name" content="Tien&#39;s Blog">
+<meta property="og:description" content="C++的移动语义和完美转发总结">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-04-18T05:42:00.000Z">
+<meta property="article:modified_time" content="2023-04-18T06:45:20.568Z">
+<meta property="article:author" content="Tien">
+<meta property="article:tag" content="编程语言">
+<meta property="article:tag" content="C++">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2023/04/18/%E5%8F%B3%E5%80%BC/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>【C++】右值、移动语义、完美转发 | Tien's Blog</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?fe67470975a39feb91f9d59afeab846c";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Tien's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section">首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section">标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section">分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section">归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/04/18/%E5%8F%B3%E5%80%BC/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/34372430?v=4">
+      <meta itemprop="name" content="Tien">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tien's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          【C++】右值、移动语义、完美转发
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-04-18 13:42:00 / 修改时间：14:45:20" itemprop="dateCreated datePublished" datetime="2023-04-18T13:42:00+08:00">2023-04-18</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>8 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>C++的移动语义和完美转发总结</p>
+<span id="more"></span>
+<h2 id="右值是什么">右值是什么</h2>
+<p>一般而言，一个左值表达式表示的是一个对象的身份（在内存中的位置），而一个右值表达式表示的是对象的值（内容）。从生命周期上看，左值在表达式结束后依然存在，而右值是表达式结束后就不再存在的临时对象。</p>
+<p>根据上边的内容，区分左值和右值最简单的方法是：<font color='cornflowerblue'><strong>有名字的对象、能取地址的是左值；匿名对象、不能取地址的为右值</strong></font></p>
+<p>右值又能分为<font color='cornflowerblue'><strong>纯右值（prvalue）和将亡值（xvalue）</strong></font></p>
+<ul>
+<li>纯右值：纯右值是下列表达式之一：对该表达式求值能够（1）计算某个运算符的操作数的值；（2）初始化某个对象的值。比如，字面量、lambda表达式、返回的临时变量等</li>
+<li>将亡值：代表它的资源能够被重新使用的对象或位域的泛左值。通常与右值引用相关，指将要被移动的对象，比如std::move返回值、返回类型为右值引用的函数返回值等。</li>
+</ul>
+<blockquote>
+<p>参考：<a
+target="_blank" rel="noopener" href="https://en.cppreference.com/w/cpp/language/value_category">Value
+categories - cppreference.com</a></p>
+</blockquote>
+<p>举个例子</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">string <span class="title">helloworld</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">string</span>(<span class="string">&quot;hello world&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    string ret = <span class="built_in">helloworld</span>();</span><br><span class="line">    cout&lt;&lt;<span class="built_in">helloworld</span>()&lt;&lt;endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>helloworld()就是个右值，ret是个左值。在代码里使用的其实是helloworld()的值，对ret赋值结束后不再存在。</p>
+<h2 id="右值引用是什么">右值引用是什么</h2>
+<p>引用就是对变量的别名，右值引用就是对右值起一个别名</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line"><span class="type">int</span>&amp; ri = i;</span><br><span class="line"><span class="type">int</span>&amp;&amp; rri = <span class="number">0</span>;<span class="comment">//右值引用</span></span><br></pre></td></tr></table></figure>
+<p>可以看到，普通的引用要求绑定到一个左值上，如果用int&amp; ri =
+0;这样的写法会报错，而右值引用则可以。可绑定类型的值总结一下：</p>
+<ul>
+<li>左值引用：只能绑定到非const左值（如果允许绑定常量左值和常量右值，意味着可以修改被绑定的值，与const定义不符）</li>
+<li>右值引用：只能绑定到非const右值</li>
+<li>常量左值引用：这个是万能的引用，既可以<font color='cornflowerblue'><strong>绑定到所有类型的值</strong></font></li>
+</ul>
+<p>之前提到过，右值在表达式结束后就被销毁，但是右值引用会给被绑定到的右值延长生命周期，变得与右值引用相同。</p>
+<h2 id="万能引用">万能引用</h2>
+<p>概念：使用<code>T&amp;&amp;</code>类型的形参既能绑定右值，又能绑定左值。</p>
+<p>前边不是说右值引用只能绑定到非const右值吗，为什么这里能绑定左值？因为之前的情况中T是一个具体的类型，T&amp;&amp;确定为右值引用。<font color='red'><strong>在发生类型推导的时候，T&amp;&amp;表示万能引用（universal
+reference）</strong></font></p>
+<p>万能引用T&amp;&amp;的类型推导规则，<font color='red'><strong>以int为例，当传入实参为左值时，T被推导为int&amp;
+;当传入实参为右值时，T被推导为非引用类型int。</strong></font></p>
+<blockquote>
+<p>If a variable or parameter is declared to have type
+<strong><code>T&amp;&amp;</code></strong> for some <strong>deduced
+type</strong> <code>T</code>, that variable or parameter is a
+<em>universal reference</em>.</p>
+<p><a
+target="_blank" rel="noopener" href="https://isocpp.org/blog/2012/11/universal-references-in-c11-scott-meyers">Universal
+References in C++11 -- Scott Meyers : Standard C++ (isocpp.org)</a></p>
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">func</span><span class="params">(T&amp;&amp; param)</span> </span>&#123;&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">int</span> i = <span class="number">42</span>;</span><br><span class="line">  <span class="built_in">func</span>(<span class="number">42</span>);<span class="comment">// 右值</span></span><br><span class="line">  <span class="built_in">func</span>(i);<span class="comment">// 左值</span></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="引用折叠">引用折叠</h2>
+<p>万能引用之所以万能，在于使用模板推导和引用折叠的规则，生成不同的实例化模板接收传进来的参数</p>
+<p>引用折叠的核心是，正常情况下C++不允许定义引用的引用，但C++编译器在某些情境下（<font color='cornflowerblue'><strong>模板实例化、auto类型推导、创建和运用typedef和别名声明、decltype</strong></font>）有可能会定义引用的引用这种形式，这时会形成引用折叠。</p>
+<p>还是用上边的例子解释，根据之前提到的万能引用的推导规则，如果用左值去传递参数，实例化的模板：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">func</span><span class="params">(<span class="type">int</span>&amp; &amp;&amp; param)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>这里出现了”引用的引用“，但是编译器不能对这个代码报错，因为在正常编写源代码时调用的形式是合理的，所以C++11之后就用引用折叠去处理这种情况。有两种类型的引用，那么引用的引用应该有四种可能的组合，引用折叠只有两条规则去应对这些组合：</p>
+<ul>
+<li>右值引用折叠到右值引用（T &amp;&amp; &amp;&amp;）还是右值引用</li>
+<li>所有其他引用类型之间的折叠（T&amp; &amp;，T&amp;
+&amp;&amp;，T&amp;&amp; &amp;）都是左值引用</li>
+</ul>
+<h2 id="移动语义">移动语义</h2>
+<p>如果类中有动态分配的内存，则必须使用<font color='A2CD5A'><strong>深拷贝</strong></font>进行拷贝构造，否则可能出现空悬指针的问题（A和B中两个指针指向同一内存，B析构释放了该内存，但A仍然存在）</p>
+<p>问题在于，深拷贝有些时候会造成不必要的性能开销，比如：有个函数func，返回值为B，然后要用B去构造A，之后B就不会再使用了。这时候还要用B去做深拷贝？为啥不能直接继续用B？</p>
+<p>所以很自然的联想到右值引用延长生命周期的作用，就有了专门的移动构造函数去接收右值引用参数。<font color='cornflowerblue'><strong>移动构造参数避免深拷贝的做法是将指针转移到被构造对象上，然后对参数对象的指针置空，避免了空悬指针的出现</strong></font></p>
+<p>上面是用右值作为参数去构造的，如果有个左值，后面不会再使用了，能不能也用类似的方式拿来构造一个新对象？</p>
+<p><font color='cornflowerblue'><strong>C++11提供了std::move()将左值转换为右值</strong></font>，然后再去做移动语义</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">TestClass a;</span><br><span class="line"><span class="function">TestClass <span class="title">b</span><span class="params">(a)</span></span>;<span class="comment">//调用拷贝构造函数</span></span><br><span class="line"><span class="function">TestClass <span class="title">c</span><span class="params">(std::move(a))</span></span>;<span class="comment">//调用移动构造函数</span></span><br></pre></td></tr></table></figure>
+<p>move的源码如下，可以看到move其实没有真正的去移动两个对象的内容，而是强制地将传入的内容转换为一个右值引用</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Ty</span>&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">remove_reference</span> &#123;</span><br><span class="line">    <span class="keyword">using</span> type                 = _Ty;</span><br><span class="line">    <span class="keyword">using</span> _Const_thru_ref_type = <span class="type">const</span> _Ty;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Ty</span>&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">remove_reference</span>&lt;_Ty&amp;&gt; &#123;</span><br><span class="line">    <span class="keyword">using</span> type                 = _Ty;</span><br><span class="line">    <span class="keyword">using</span> _Const_thru_ref_type = <span class="type">const</span> _Ty&amp;;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Ty</span>&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">remove_reference</span>&lt;_Ty&amp;&amp;&gt; &#123;</span><br><span class="line">    <span class="keyword">using</span> type                 = _Ty;</span><br><span class="line">    <span class="keyword">using</span> _Const_thru_ref_type = <span class="type">const</span> _Ty&amp;&amp;;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Ty</span>&gt;</span><br><span class="line"><span class="keyword">using</span> <span class="type">remove_reference_t</span> = <span class="keyword">typename</span> remove_reference&lt;_Ty&gt;::type;</span><br></pre></td></tr></table></figure>
+<h2 id="完美转发">完美转发</h2>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">func</span><span class="params">(T&amp; param)</span> </span>&#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;lvalue&quot;</span> &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">func</span><span class="params">(T&amp;&amp; param)</span> </span>&#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;rvalue&quot;</span> &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">warp</span><span class="params">(T&amp;&amp; param)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">func</span>(param);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> i = <span class="number">42</span>;</span><br><span class="line">    <span class="built_in">warp</span>(i);<span class="comment">//&quot;lvalue&quot;</span></span><br><span class="line">    <span class="built_in">warp</span>(<span class="number">42</span>);<span class="comment">//&quot;lvalue&quot;</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个例子里，理想的情况是warp(42)应该全程是进行参数为右值引用的调用，但实际的输出说明在经过warp函数后，再调用func时右值变为了左值。</p>
+<p>问题在于，warp(42)接收到的实参确实是右值，其推断的形参类型为右值引用int&amp;&amp;，右值引用是说<font color='cornflowerblue'><strong>被绑定的变量是个右值，而引用本身是一个左值</strong></font>，所以再去调用func的时候会按照左值去使用。</p>
+<p>为了解决这个问题，引入了std::forward()</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Ty</span>&gt;</span><br><span class="line"><span class="function">_NODISCARD <span class="keyword">constexpr</span> _Ty&amp;&amp; <span class="title">forward</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="type">remove_reference_t</span>&lt;_Ty&gt;&amp; _Arg)</span> <span class="keyword">noexcept</span> </span>&#123; </span><br><span class="line">    <span class="comment">// forward an lvalue as either an lvalue or an rvalue</span></span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">static_cast</span>&lt;_Ty&amp;&amp;&gt;(_Arg);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="title class_">_Ty</span>&gt;</span><br><span class="line"><span class="function">_NODISCARD <span class="keyword">constexpr</span> _Ty&amp;&amp; <span class="title">forward</span><span class="params">(<span class="type">remove_reference_t</span>&lt;_Ty&gt;&amp;&amp; _Arg)</span> <span class="keyword">noexcept</span> </span>&#123; </span><br><span class="line">    <span class="comment">// forward an rvalue as an rvalue</span></span><br><span class="line">    <span class="built_in">static_assert</span>(!is_lvalue_reference_v&lt;_Ty&gt;, <span class="string">&quot;bad forward call&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">static_cast</span>&lt;_Ty&amp;&amp;&gt;(_Arg);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以下都以int为例说明，</p>
+<p>如果传入<code>warp</code>的是左值，<code>std::forward</code>接受的是一个左值引用，这里_Ty被推导为int&amp;类型，被实例化为接受和返回左值引用。内部的转换不做任何事。</p>
+<p>如果传入<code>warp</code>的是右值，<code>std::forward</code>接受的是一个右值引用，这里_Ty被推导为int类型，被实例化为接受和返回右值引用。内部的转换不做任何事。</p>
+<p>MSVC这个实现里有个注释”forward an lvalue as either an lvalue or an
+rvalue“，这个是对传入的是左值<font color='red'><strong>（forward传入的是左值，不是引用类型）</strong></font>说的，如果传入的是左值，_Ty被推导为int，那个最后返回的类型是int&amp;&amp;,这个作用就相当于<code>std::move()</code>（但是真的会有人这么用吗……）</p>
+<p>那么之前的例子可以改写，从而实现真正的根据参数是左值还是右值进行调用</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;type_traits&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">func</span><span class="params">(T&amp; param)</span> </span>&#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;lvalue&quot;</span> &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">func</span><span class="params">(T&amp;&amp; param)</span> </span>&#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;rvalue&quot;</span> &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">warp</span><span class="params">(T&amp;&amp; param)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">func</span>(std::forward&lt;T&gt;(param));</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> i = <span class="number">42</span>;</span><br><span class="line">    <span class="built_in">warp</span>(i);<span class="comment">//&quot;lvalue&quot;</span></span><br><span class="line">    <span class="built_in">warp</span>(<span class="number">42</span>);<span class="comment">//&quot;rvalue&quot;</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="移动vs拷贝">移动vs拷贝</h2>
+<p>之前提到移动是为了避免不必要的深拷贝造成的时间开销，从而提高性能，那移动一定比拷贝要快吗？</p>
+<p>不一定，移动快的原因是直接把指针的所有权转移，如果数据类型没有指针，比如基础类型，或者STL中的array，移动和拷贝是等价的。都还是要对元素进行”搬家“。</p>
+<h2 id="参考">参考</h2>
+<p><a
+target="_blank" rel="noopener" href="https://en.cppreference.com/w/cpp/language/value_category">Value
+categories - cppreference.com</a></p>
+<p><a
+target="_blank" rel="noopener" href="https://isocpp.org/blog/2012/11/universal-references-in-c11-scott-meyers">Universal
+References in C++11 -- Scott Meyers : Standard C++ (isocpp.org)</a></p>
+<p><a
+target="_blank" rel="noopener" href="https://yngzmiao.blog.csdn.net/article/details/105598036">右值引用、移动语义、完美转发下篇</a></p>
+<p><a
+target="_blank" rel="noopener" href="https://cntransgroup.github.io/EffectiveModernCppChinese/5.RRefMovSemPerfForw/item28.html">理解引用折叠
+- Effective Modern C++</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/" rel="tag"># 编程语言</a>
+              <a href="/tags/C/" rel="tag"># C++</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/04/17/IP%E7%9B%B8%E5%85%B3%E5%86%85%E5%AE%B9/" rel="prev" title="IP相关内容">
+      <i class="fa fa-chevron-left"></i> IP相关内容
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%B3%E5%80%BC%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.</span> <span class="nav-text">右值是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">2.</span> <span class="nav-text">右值引用是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%87%E8%83%BD%E5%BC%95%E7%94%A8"><span class="nav-number">3.</span> <span class="nav-text">万能引用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%95%E7%94%A8%E6%8A%98%E5%8F%A0"><span class="nav-number">4.</span> <span class="nav-text">引用折叠</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A7%BB%E5%8A%A8%E8%AF%AD%E4%B9%89"><span class="nav-number">5.</span> <span class="nav-text">移动语义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91"><span class="nav-number">6.</span> <span class="nav-text">完美转发</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A7%BB%E5%8A%A8vs%E6%8B%B7%E8%B4%9D"><span class="nav-number">7.</span> <span class="nav-text">移动vs拷贝</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">8.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Tien"
+      src="https://avatars.githubusercontent.com/u/34372430?v=4">
+  <p class="site-author-name" itemprop="name">Tien</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Tien5770" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Tien5770" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/txvhuiu@163.com" title="E-Mail → txvhuiu@163.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tien</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">55k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">3:21</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+<div>
+<span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+<script>
+    var now = new Date();
+    function createtime() {
+        var grt= new Date("04/12/2023 09:00:00");
+        now.setTime(now.getTime()+250);
+        days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days);
+        hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours);
+        if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum);
+        mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;}
+        seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum);
+        snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;}
+        document.getElementById("timeDate").innerHTML = "本站已安全运行 "+dnum+" 天 ";
+        document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒";
+    }
+setInterval("createtime()",250);
+</script>
+</div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '50565f9d05a1db99e275',
+      clientSecret: 'de517846c9a00de3d47423aa775f62b0da777d2e',
+      repo        : 'Tien5770.github.io',
+      owner       : 'Tien5770',
+      admin       : ['Tien5770'],
+      id          : '15626e36ae370a7c6739d485535e35b5',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>
