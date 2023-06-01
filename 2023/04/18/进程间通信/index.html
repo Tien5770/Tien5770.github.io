@@ -29,7 +29,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/2023/04/18/%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1/image-20230418200649464.png">
 <meta property="article:published_time" content="2023-04-18T12:37:36.831Z">
-<meta property="article:modified_time" content="2023-04-18T12:37:47.405Z">
+<meta property="article:modified_time" content="2023-04-22T15:06:21.563Z">
 <meta property="article:author" content="Tien">
 <meta property="article:tag" content="操作系统">
 <meta property="article:tag" content="进程通信">
@@ -220,10 +220,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2023-04-18 20:37:36 / 修改时间：20:37:47" itemprop="dateCreated datePublished" datetime="2023-04-18T20:37:36+08:00">2023-04-18</time>
+              <time title="创建时间：2023-04-18 20:37:36" itemprop="dateCreated datePublished" datetime="2023-04-18T20:37:36+08:00">2023-04-18</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-04-22 23:06:21" itemprop="dateModified" datetime="2023-04-22T23:06:21+08:00">2023-04-22</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -247,7 +253,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.3k</span>
+              <span>1.5k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -272,6 +278,7 @@
 <p>系统调用<code>int pipe(int fd[2])</code></p>
 <p>该调用创建的是一个匿名管道，参数是一个文件描述符数组，<code>fd[0]</code>是读端描述符，<code>fd[1]</code>是写端描述符。虽然用了文件描述符，但<font color='red'><strong>匿名管道存在于内存中，是内核里面的一串缓存。</strong></font></p>
 <p>管道用于进程间通信是利用了<code>fork()</code>创建的子进程会复制父进程的文件描述符，所以管道读写两端的文件描述符在父子进程中都存在，通过在同一个管道中写入或读取就可以实现通信</p>
+<p>管道中读取数据是一次性操作，数据一旦被读走就从管道中被抛弃</p>
 <p>管道是半双工的，但父子进程可能同时写入或同时读出，为了避免混乱，通常：</p>
 <ul>
 <li>父进程关闭<code>fd[0]</code></li>
@@ -283,7 +290,7 @@
 <p>缺点：</p>
 <ul>
 <li>管道是内核态的资源，访问时需要进行上下文切换，开销较大</li>
-<li>管道的工作方式：进程A将数据写入后会阻塞，等到数据被读完之后才会退出，通信效率较低</li>
+<li>管道的工作方式：进程A将缓冲区写满后会阻塞，等到数据被读完之后才会退出，通信效率较低；读缓冲区为空时也会阻塞</li>
 </ul>
 <h2 id="消息队列">消息队列</h2>
 <p><font color='cornflowerblue'><strong>消息队列是保存在内核中的消息列表</strong></font></p>
@@ -319,11 +326,32 @@ target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/165224175">小
 <p><font color='A2CD5A'><strong>如果信号量初值为0，则其为同步信号量</strong></font>，需要先执行的进程，执行完之后进行V操作；后执行的进程，执行前进行P操作。</p>
 <h2 id="信号">信号</h2>
 <p><font color='cornflowerblue'><strong>信号是进程间通信在异常情况下的工作模式</strong></font></p>
+<p>信号来源：</p>
+<ul>
+<li>对于前台进程，用户可以通过输入特殊终端字符发送信号（e.g.
+Ctrl+c）</li>
+<li>硬件发生异常，检测到错误条件通知内核，内核随即发送相应信号给相关进程</li>
+<li>系统状态变换，比如<code>alarm</code>定时器到期会引起<code>SIGALRM</code>信号</li>
+<li>运行kill命令或调用kill函数</li>
+</ul>
+<p>使用信号的目的：</p>
+<ul>
+<li>让进程知道已经发生了一个特定的事件</li>
+<li>强迫进程执行它自己代码中的信号处理程序</li>
+</ul>
 <p>信号是进程间通信机制中唯一的异步通信机制，可以在任何时候发送信号给某一进程，一旦有信号产生，用户进程对信号的处理方式有如下几种：</p>
 <ul>
 <li>执行默认操作</li>
 <li>捕捉信号</li>
 <li>忽略信号</li>
+</ul>
+<p><strong>默认处理动作(<code>man 7 signal</code>)：</strong></p>
+<ul>
+<li>Term终止进程</li>
+<li>Ign忽略信号</li>
+<li>Core终止进程，产生Core文件</li>
+<li>Stop暂停进程</li>
+<li>Cont继续执行被暂停的进程</li>
 </ul>
 <h2 id="socket">Socket</h2>
 <p>Socket能够在同主机不同进程之间，或不同主机的进程之间通信</p>
@@ -353,7 +381,10 @@ target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/165224175">小
     <a href="/2023/04/18/%E5%8F%B3%E5%80%BC/" rel="prev" title="【C++】右值、移动语义、完美转发">
       <i class="fa fa-chevron-left"></i> 【C++】右值、移动语义、完美转发
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2023/04/19/%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95%E9%9B%86%E5%90%88/" rel="next" title="【操作系统】调度算法集合">
+      【操作系统】调度算法集合 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -429,20 +460,20 @@ target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/165224175">小
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-count">17</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-count">20</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -491,13 +522,13 @@ target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/165224175">小
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">57k</span>
+    <span title="站点总字数">60k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">3:25</span>
+    <span title="站点阅读时长">3:37</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
